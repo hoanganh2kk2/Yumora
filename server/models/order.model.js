@@ -1,12 +1,12 @@
 import mongoose from "mongoose";
 
-const orderSchema = new mongoose.Schema9(
+const orderSchema = new mongoose.Schema(
   {
     userId: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
     },
-    oderId: {
+    orderId: {
       type: String,
       required: [true, "Provide orderId"],
       unique: true,
@@ -45,7 +45,7 @@ const orderSchema = new mongoose.Schema9(
     },
   },
   {
-    timestamp: true,
+    timestamps: true,
   }
 );
 

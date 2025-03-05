@@ -1,6 +1,7 @@
 import sendEmail from "../config/sendEmail";
 import UserModel from "../models/user.model";
 import bcryptjs from "bcryptjs";
+import verityEmailTemplate from "../utils/verifyEmailTemplate";
 
 export async function registerUserController(request, response) {
   try {
@@ -36,11 +37,23 @@ export async function registerUserController(request, response) {
     const newUser = new UserModel(payload);
     const save = await newUser.save();
 
+    const VerifyEmailUrl = `${process.env.FRONTEND_URL}/verify-email?code=${save._id}`;
+
     const verityEmail = await sendEmail({
-        sendTo:email,
-        subject:"Verify email from binkeyit",
-        html: 
-    })
+      sendTo: email,
+      subject: "Verify email from binkeyit",
+      html: verityEmailTemplate({
+        name,
+        url: VerifyEmailUrl,
+      }),
+    });
+
+    return response.json({
+      message: error.message || error,
+      error: false,
+      success: true,
+      data: save,
+    });
   } catch (error) {
     return response.status(500).json({
       message: error.message || error,

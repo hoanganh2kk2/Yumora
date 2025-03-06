@@ -172,6 +172,7 @@ export async function loginController(request, response) {
 //logout controller
 export async function logoutController(request, response) {
   try {
+    const userid = request.userId; //middleware
     const cookiesOption = {
       httpOnly: true,
       secure: true,
@@ -180,6 +181,10 @@ export async function logoutController(request, response) {
 
     response.clearCookie("accessToken", cookiesOption);
     response.clearCookie("refreshToken", cookiesOption);
+
+    const removeRefreshToken = await UserModel.findByIdAndUpdate(userid, {
+      refresh_token: "",
+    });
 
     return response.json({
       message: "Logout successfully",

@@ -4,6 +4,7 @@ import bcryptjs from "bcryptjs";
 import verityEmailTemplate from "../utils/verifyEmailTemplate.js";
 import generatedAccessToken from "../utils/generatedAccessToken.js";
 import generatedRefreshToken from "../utils/generatedRefreshToken.js";
+import uploadImageCloudinary from "../utils/uploadImageCloudinary.js";
 
 export async function registerUserController(request, response) {
   try {
@@ -190,6 +191,34 @@ export async function logoutController(request, response) {
       message: "Logout successfully",
       error: false,
       success: true,
+    });
+  } catch (error) {
+    return response.status(500).json({
+      message: error.message || error,
+      error: true,
+      success: false,
+    });
+  }
+}
+
+//upload user avatar
+export async function uploadAvatar(request, response) {
+  try {
+    const userId = request.userId; // auth middleware
+    const image = request.file; //multer middleware
+
+    const upload = await uploadImageCloudinary(image);
+
+    const updateUser = await UserModel.findByIdAndUpdate(userId, {
+      avatar: upload.url,
+    });
+
+    return response.json({
+      message: "upload profile",
+      data: {
+        _id: userId,
+        avatar: upload.url,
+      },
     });
   } catch (error) {
     return response.status(500).json({

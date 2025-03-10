@@ -20,7 +20,6 @@ const Search = () => {
     navigate("/search");
   };
 
-  console.log("isSearchPage", isSearchPage);
 
   return (
     <div className="group focus-within:border-primary-200 flex h-11 w-full min-w-[300px] items-center overflow-hidden rounded-lg border border-slate-200 bg-slate-50 text-neutral-500 lg:h-12 lg:min-w-[420px]">

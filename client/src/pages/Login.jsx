@@ -57,8 +57,7 @@ const Login = () => {
   return (
     <section className="container mx-auto w-full px-2">
       <div className="mx-auto my-4 w-full max-w-lg rounded bg-white p-7">
-
-        <form className=" grid gap-4 py-4" onSubmit={handleSubmit}>
+        <form className="grid gap-4 py-4" onSubmit={handleSubmit}>
           <div className="grid gap-1">
             <label htmlFor="email">Email :</label>
             <input
@@ -78,7 +77,6 @@ const Login = () => {
               <input
                 type={showPassword ? "text" : "password"}
                 id="password"
-                autoFocus
                 className="w-full outline-none"
                 name="password"
                 value={data.password}
@@ -88,11 +86,18 @@ const Login = () => {
               <div
                 onClick={() => setShowPassword((pre) => !pre)}
                 className="cursor-pointer"
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                role="button"
               >
                 {showPassword ? <FaRegEye /> : <FaRegEyeSlash />}
               </div>
             </div>
-            <Link to={"/forgot-password"} className="block ml-auto hover:text-primary-200">Forgot password ?</Link>
+            <Link
+              to={"/forgot-password"}
+              className="hover:text-primary-200 ml-auto block"
+            >
+              Forgot password ?
+            </Link>
           </div>
 
           <button

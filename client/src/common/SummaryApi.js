@@ -17,5 +17,13 @@ const SummaryApi = {
     url: "/api/user/verify-forgot-password-otp",
     method: "put",
   },
+  reset_password: {
+    url: "/api/user/reset-password",
+    method: "put",
+  },
+  refreshToken: {
+    url: "/api/user/refresh-token",
+    method: "post",
+  },
 };
 export default SummaryApi;

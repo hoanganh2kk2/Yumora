@@ -23,6 +23,19 @@ const Header = () => {
     navigate("/login");
   };
 
+  const handleCloseUserMenu = () => {
+    setOpenUserMenu(false);
+  };
+
+  const handelMobileUser = () => {
+    if (!user._id) {
+      navigate("/login");
+      return;
+    }
+
+    navigate("/user");
+  };
+
   return (
     <header className="sticky top-0 z-40 flex h-24 flex-col justify-center gap-1 bg-white lg:h-20 lg:shadow-md">
       {!(isSearchPage && isMobile) && (
@@ -55,7 +68,10 @@ const Header = () => {
           {/**login and my cart */}
           <div className="">
             {/**user icons display in only mobile version**/}
-            <button className="text-neutral-600 lg:hidden">
+            <button
+              className="text-neutral-600 lg:hidden"
+              onClick={handelMobileUser}
+            >
               <FaRegCircleUser size={26} />
             </button>
 
@@ -77,7 +93,7 @@ const Header = () => {
                   {openUserMenu && (
                     <div className="absolute top-12 right-0">
                       <div className="min-w-52 rounded bg-white p-4 lg:shadow-lg">
-                        <UserMenu />
+                        <UserMenu close={handleCloseUserMenu} />
                       </div>
                     </div>
                   )}

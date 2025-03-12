@@ -13,7 +13,6 @@ function App() {
 
   const fetchUser = async () => {
     const userData = await fetchUserDetails();
-    console.log("userDate", userData.data);
     dispatch(setUserDetails(userData.data));
   };
 

@@ -33,5 +33,13 @@ const SummaryApi = {
     url: "/api/user/logout",
     method: "get",
   },
+  uploadAvatar: {
+    url: "/api/user/upload-avatar",
+    method: "put",
+  },
+  updateUserDetails: {
+    url: "/api/user/upload-user",
+    method: "put",
+  },
 };
 export default SummaryApi;

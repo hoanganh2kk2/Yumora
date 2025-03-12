@@ -7,6 +7,7 @@ import SummaryApi from "../common/SummaryApi";
 import { logout } from "../store/userSlice";
 import toast from "react-hot-toast";
 import AxiosToastError from "../utils/AxiosToastError";
+import { HiOutlineExternalLink } from "react-icons/hi";
 
 const UserMenu = ({ close }) => {
   const user = useSelector((state) => state.user);
@@ -33,18 +34,42 @@ const UserMenu = ({ close }) => {
     }
   };
 
+  const handleClose = () => {
+    if (close) {
+      close();
+    }
+  };
   return (
     <div>
       <div className="font-semibold">My Account</div>
-      <div className="text-sm">{user.name || user.mobile}</div>
+      <div className="flex items-center gap-2 text-sm">
+        <span className="line-clamp-1 max-w-52 text-ellipsis">
+          {user.name || user.mobile}
+        </span>
+        <Link
+          onClick={handleClose}
+          to={"/dashboard/profile"}
+          className="hover:text-primary-200 pb-0.5"
+        >
+          <HiOutlineExternalLink size={15} />
+        </Link>
+      </div>
 
       <Divider />
 
       <div className="grid gap-1 text-sm">
-        <Link to={""} className="px-2 py-1 hover:bg-orange-200">
+        <Link
+          onClick={handleClose}
+          to={"/dashboard/myorders"}
+          className="px-2 py-1 hover:bg-orange-200"
+        >
           My Orders
         </Link>
-        <Link to={""} className="px-2 py-1 hover:bg-orange-200">
+        <Link
+          onClick={handleClose}
+          to={"/dashboard/address"}
+          className="px-2 py-1 hover:bg-orange-200"
+        >
           Save Address
         </Link>
         <button

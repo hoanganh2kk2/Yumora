@@ -17,8 +17,6 @@ const Header = () => {
   const user = useSelector((state) => state?.user);
   const [openUserMenu, setOpenUserMenu] = useState(false);
 
-  console.log("user", user);
-
   const redirectToLoginPage = () => {
     navigate("/login");
   };

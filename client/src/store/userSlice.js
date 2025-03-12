@@ -33,7 +33,10 @@ const userSlice = createSlice({
       state.orderHistory = action.payload?.orderHistory;
       state.role = action.payload?.role;
     },
-    logout: (state,action) => {
+    updatedAvatar: (state, action) => {
+      state.avatar = action.payload?.avatar;
+    },
+    logout: (state, action) => {
       state._id = "";
       state.name = "";
       state.email = "";
@@ -50,6 +53,6 @@ const userSlice = createSlice({
   },
 });
 
-export const { setUserDetails, logout } = userSlice.actions;
+export const { setUserDetails, logout, updatedAvatar } = userSlice.actions;
 
 export default userSlice.reducer;

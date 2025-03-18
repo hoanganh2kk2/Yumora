@@ -31,9 +31,9 @@ const Profile = () => {
   const handleOnChange = (e) => {
     const { name, value } = e.target;
 
-    setUserData((preve) => {
+    setUserData((pre) => {
       return {
-        ...preve,
+        ...pre,
         [name]: value,
       };
     });

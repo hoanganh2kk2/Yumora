@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import { FaRegUserCircle } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import Axios from "../utils/Axios";
-import AxiosToastError from "../utils/AxiosToastError";
 import SummaryApi from "../common/SummaryApi";
+import AxiosToastError from "../utils/AxiosToastError";
 import { updatedAvatar } from "../store/userSlice";
 import { IoClose } from "react-icons/io5";
 
-const UserProfileAvatarEdit = ({close}) => {
+const UserProfileAvatarEdit = ({ close }) => {
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
@@ -41,20 +41,18 @@ const UserProfileAvatarEdit = ({close}) => {
       setLoading(false);
     }
   };
-
   return (
-    <section className="fixed top-0 right-0 bottom-0 left-0 flex items-center justify-center bg-neutral-900/60 p-4">
+    <section className="bg-opacity-60 fixed top-0 right-0 bottom-0 left-0 flex items-center justify-center bg-neutral-900 p-4">
       <div className="flex w-full max-w-sm flex-col items-center justify-center rounded bg-white p-4">
-        <button onClick={close} className="text-neutral-800 w-fit block ml-auto">
+        <button
+          onClick={close}
+          className="ml-auto block w-fit text-neutral-800"
+        >
           <IoClose size={20} />
         </button>
         <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full bg-red-500 drop-shadow-sm">
           {user.avatar ? (
-            <img
-              alt={user.name}
-              src={user.avatar}
-              className="h-full w-full object-cover"
-            />
+            <img alt={user.name} src={user.avatar} className="h-full w-full" />
           ) : (
             <FaRegUserCircle size={65} />
           )}
@@ -64,13 +62,13 @@ const UserProfileAvatarEdit = ({close}) => {
             <div className="border-primary-200 hover:bg-primary-200 my-3 cursor-pointer rounded border px-4 py-1 text-sm">
               {loading ? "Loading..." : "Upload"}
             </div>
+            <input
+              onChange={handleUploadAvatarImage}
+              type="file"
+              id="uploadProfile"
+              className="hidden"
+            />
           </label>
-          <input
-            onChange={handleUploadAvatarImage}
-            type="file"
-            id="uploadProfile"
-            className="hidden"
-          />
         </form>
       </div>
     </section>

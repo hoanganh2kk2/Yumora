@@ -34,7 +34,7 @@ const userSlice = createSlice({
       state.role = action.payload?.role;
     },
     updatedAvatar: (state, action) => {
-      state.avatar = action.payload?.avatar;
+      state.avatar = action.payload;
     },
     logout: (state, action) => {
       state._id = "";

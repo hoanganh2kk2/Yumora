@@ -5,6 +5,7 @@ const auth = async (request, response, next) => {
     const token =
       request.cookies.accessToken ||
       request?.headers?.authorization?.split(" ")[1];
+
     if (!token) {
       return response.status(401).json({
         message: "Provide token",
@@ -26,7 +27,7 @@ const auth = async (request, response, next) => {
     next();
   } catch (error) {
     return response.status(500).json({
-      message: error.message || error,
+      message: "You have not login", ///error.message || error,
       error: true,
       success: false,
     });

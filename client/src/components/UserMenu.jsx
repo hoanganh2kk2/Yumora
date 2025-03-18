@@ -19,7 +19,7 @@ const UserMenu = ({ close }) => {
       const response = await Axios({
         ...SummaryApi.logout,
       });
-
+      console.log("logout", response);
       if (response.data.success) {
         if (close) {
           close();
@@ -30,6 +30,7 @@ const UserMenu = ({ close }) => {
         navigate("/");
       }
     } catch (error) {
+      console.log(error);
       AxiosToastError(error);
     }
   };
@@ -60,11 +61,44 @@ const UserMenu = ({ close }) => {
       <div className="grid gap-1 text-sm">
         <Link
           onClick={handleClose}
+          to={"/dashboard/category"}
+          className="px-2 py-1 hover:bg-orange-200"
+        >
+          Category
+        </Link>
+
+        <Link
+          onClick={handleClose}
+          to={"/dashboard/subcategory"}
+          className="px-2 py-1 hover:bg-orange-200"
+        >
+          Sub Category
+        </Link>
+
+        <Link
+          onClick={handleClose}
+          to={"/dashboard/upload-product"}
+          className="px-2 py-1 hover:bg-orange-200"
+        >
+          Upload Product
+        </Link>
+
+        <Link
+          onClick={handleClose}
+          to={"/dashboard/product"}
+          className="px-2 py-1 hover:bg-orange-200"
+        >
+          Product
+        </Link>
+
+        <Link
+          onClick={handleClose}
           to={"/dashboard/myorders"}
           className="px-2 py-1 hover:bg-orange-200"
         >
           My Orders
         </Link>
+
         <Link
           onClick={handleClose}
           to={"/dashboard/address"}
@@ -72,6 +106,7 @@ const UserMenu = ({ close }) => {
         >
           Save Address
         </Link>
+
         <button
           onClick={handleLogout}
           className="px-2 py-1 text-left hover:bg-orange-200"

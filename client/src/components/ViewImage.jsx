@@ -11,7 +11,8 @@ const ViewImage = ({ url, close }) => {
         <img
           src={url}
           alt="full screen"
-          className="h-full w-full object-scale-down"
+          // className="h-full w-full object-scale-down"
+          className="mx-auto max-h-[70vh] w-auto object-contain"
         />
       </div>
     </div>

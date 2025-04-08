@@ -150,12 +150,15 @@ const SubCategoryPage = () => {
         </button>
       </div>
 
-      <div className="overflow-auto w-full max-w-[95vw]">
+      <div className="w-full max-w-[95vw] overflow-auto">
         <DisplayTable data={data} column={column} />
       </div>
 
       {openAddSubCategory && (
-        <UploadSubCategoryModel close={() => setOpenAddSubCategory(false)} />
+        <UploadSubCategoryModel
+          close={() => setOpenAddSubCategory(false)}
+          fetchData={fetchSubCategory}
+        />
       )}
 
       {ImageURL && <ViewImage url={ImageURL} close={() => setImageURL("")} />}

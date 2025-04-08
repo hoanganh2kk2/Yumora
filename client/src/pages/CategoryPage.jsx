@@ -24,32 +24,33 @@ const CategoryPage = () => {
   const [deleteCategory, setDeleteCategory] = useState({
     _id: "",
   });
-  const allCategory = useSelector((state) => state.product.allCategory);
-
-  useEffect(() => {
-    setCategoryData(allCategory);
-  }, [allCategory]);
-  // const fetchCategory = async () => {
-  //   try {
-  //     setLoading(true);
-  //     const response = await Axios({
-  //       ...SummaryApi.getCategory,
-  //     });
-
-  //     const { data: responseData } = response;
-
-  //     if (responseData.success) {
-  //       setCategoryData(responseData.data);
-  //     }
-  //   } catch (error) {
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+  // const allCategory = useSelector((state) => state.product.allCategory);
 
   // useEffect(() => {
-  //   fetchCategory();
-  // }, []);
+  //   setCategoryData(allCategory);
+  // }, [allCategory]);
+
+  const fetchCategory = async () => {
+    try {
+      setLoading(true);
+      const response = await Axios({
+        ...SummaryApi.getCategory,
+      });
+
+      const { data: responseData } = response;
+
+      if (responseData.success) {
+        setCategoryData(responseData.data);
+      }
+    } catch (error) {
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCategory();
+  }, []);
 
   const handleDeleteCategory = async () => {
     try {

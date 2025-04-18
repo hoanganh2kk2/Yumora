@@ -8,9 +8,26 @@
   --color-secondary-100: #0b1a78;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   font-family: "Poppins", sans-serif;
   font-weight: 100;
   font-style: normal;
-  @apply bg-blue-50 text-neutral-700;
+  @apply scroll-smooth bg-blue-50 text-neutral-700;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbarCustom::-webkit-scrollbar {
+  width: 10px;
+  @apply bg-slate-100;
+}
+
+.scrollbarCustom::-webkit-scrollbar-thumb {
+  @apply rounded-full bg-blue-100;
 }

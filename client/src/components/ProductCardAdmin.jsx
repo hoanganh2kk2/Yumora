@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
-// import EditProductAdmin from './EditProductAdmin'
-import ConfirmBox from './ConfirmBox'
+import EditProductAdmin from './EditProductAdmin'
 import { IoClose } from 'react-icons/io5'
 import SummaryApi from '../common/SummaryApi'
 import Axios from '../utils/Axios'
@@ -53,11 +52,11 @@ const ProductCardAdmin = ({ data, fetchProductData }) => {
           <button onClick={()=>setOpenDelete(true)} className='border px-1 py-1 text-sm border-red-600 bg-red-100 text-red-600 hover:bg-red-200 rounded'>Delete</button>
         </div>
 
-        {/* {
+        {
           editOpen && (
             <EditProductAdmin fetchProductData={fetchProductData} data={data} close={()=>setEditOpen(false)}/>
           )
-        } */}
+        }
 
         {
           openDelete && (

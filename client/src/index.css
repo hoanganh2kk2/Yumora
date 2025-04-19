@@ -25,9 +25,12 @@ body {
 
 .scrollbarCustom::-webkit-scrollbar {
   width: 10px;
-  @apply bg-slate-100;
+  /* @apply bg-slate-100; */
+  background-color: #f1f5f9;
 }
 
 .scrollbarCustom::-webkit-scrollbar-thumb {
-  @apply rounded-full bg-blue-100;
+  /* @apply rounded-full bg-blue-100; */
+  background-color: #dbeafe;
+  border-radius: 9999px;
 }

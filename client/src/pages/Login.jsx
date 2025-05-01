@@ -78,11 +78,11 @@ const Login = () => {
               name="email"
               value={data.email}
               onChange={handleChange}
-              placeholder="Enter your email"
+              placeholder="Nhập email"
             />
           </div>
           <div className="grid gap-1">
-            <label htmlFor="password">Password :</label>
+            <label htmlFor="password">Mật khẩu :</label>
             <div className="focus-within:border-primary-200 flex items-center rounded border border-slate-200 bg-blue-50 p-2">
               <input
                 type={showPassword ? "text" : "password"}
@@ -91,7 +91,7 @@ const Login = () => {
                 name="password"
                 value={data.password}
                 onChange={handleChange}
-                placeholder="Enter your password"
+                placeholder="Nhập mật khẩu"
               />
               <div
                 onClick={() => setShowPassword((pre) => !pre)}
@@ -106,7 +106,7 @@ const Login = () => {
               to={"/forgot-password"}
               className="hover:text-primary-200 ml-auto block"
             >
-              Forgot password ?
+              Quên mật khẩu ?
             </Link>
           </div>
 
@@ -114,17 +114,17 @@ const Login = () => {
             disabled={!validValue}
             className={` ${validValue ? "bg-green-800 hover:bg-green-700" : "bg-gray-500"} my-3 rounded py-2 font-semibold tracking-wide text-white`}
           >
-            Login
+            Đăng nhập
           </button>
         </form>
 
         <p>
-          Don't have account ?
+          Bạn chưa có tài khoản ?
           <Link
             to={"/register"}
             className="font-semibold text-green-700 hover:text-green-800"
           >
-            Register
+            Đăng ký
           </Link>
         </p>
       </div>

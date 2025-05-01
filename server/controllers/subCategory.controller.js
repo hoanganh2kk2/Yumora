@@ -6,7 +6,7 @@ export const AddSubCategoryController = async (request, response) => {
 
     if (!name && !image && !category[0]) {
       return response.status(400).json({
-        message: "Provide name, image, category",
+        message: "Cung cấp tên, hình ảnh, danh mục",
         error: true,
         success: false,
       });
@@ -22,7 +22,7 @@ export const AddSubCategoryController = async (request, response) => {
     const save = await createSubCategory.save();
 
     return response.json({
-      message: "Sub Category Created",
+      message: "Danh mục sản phẩm đã được tạo thành công",
       data: save,
       error: false,
       success: true,
@@ -77,7 +77,7 @@ export const updateSubCategoryController = async (request, response) => {
     });
 
     return response.json({
-      message: "Updated Successfully",
+      message: "Cập nhật thành công",
       data: updateSubCategory,
       error: false,
       success: true,
@@ -98,7 +98,7 @@ export const deleteSubCategoryController = async (request, response) => {
     const deleteSub = await SubCategoryModel.findByIdAndDelete(_id);
 
     return response.json({
-      message: "Delete successfully",
+      message: "Xóa thành công",
       data: deleteSub,
       error: false,
       success: true,

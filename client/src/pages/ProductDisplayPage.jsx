@@ -8,8 +8,8 @@ import { DisplayPriceInRupees } from "../utils/DisplayPriceInRupees";
 import Divider from "../components/Divider";
 import image1 from "../assets/minute_delivery.png";
 import image2 from "../assets/Best_Prices_Offers.png";
-import image3 from "../assets/Wide_Assortment.png";
-// import { priceWithDiscount } from "../utils/PriceWithDiscount";
+import image3 from "../assets/Wide_Assortment2.png";
+import { priceWithDiscount } from "../utils/PriceWithDiscount";
 // import AddToCartButton from "../components/AddToCartButton";
 
 const ProductDisplayPage = () => {
@@ -114,11 +114,11 @@ const ProductDisplayPage = () => {
 
         <div className="my-4 hidden gap-3 lg:grid">
           <div>
-            <p className="font-semibold">Description</p>
+            <p className="font-semibold">Miêu tả</p>
             <p className="text-base">{data.description}</p>
           </div>
           <div>
-            <p className="font-semibold">Unit</p>
+            <p className="font-semibold">Khối lượng</p>
             <p className="text-base">{data.unit}</p>
           </div>
           {data?.more_details &&
@@ -134,18 +134,18 @@ const ProductDisplayPage = () => {
       </div>
 
       <div className="p-4 text-base lg:pl-7 lg:text-lg">
-        <p className="w-fit rounded-full bg-green-300 px-2">10 Min</p>
+        <p className="w-fit rounded-full bg-green-300 px-2">10 phút</p>
         <h2 className="text-lg font-semibold lg:text-3xl">{data.name}</h2>
         <p className="">{data.unit}</p>
         <Divider />
         <div>
-          <p className="">Price</p>
+          <p className="">Giá</p>
           <div className="flex items-center gap-2 lg:gap-4">
             <div className="w-fit rounded border border-green-600 bg-green-50 px-4 py-2">
               <p className="text-lg font-semibold lg:text-xl">
-                {/* {DisplayPriceInRupees(
+                {DisplayPriceInRupees(
                   priceWithDiscount(data.price, data.discount),
-                )} */}
+                )}
               </p>
             </div>
             {data.discount && (
@@ -153,51 +153,53 @@ const ProductDisplayPage = () => {
             )}
             {data.discount && (
               <p className="font-bold text-green-600 lg:text-2xl">
-                {data.discount}%{" "}
-                <span className="text-base text-neutral-500">Discount</span>
+                <span className="text-base text-neutral-500">Giảm giá </span>
+                {data.discount}%
               </p>
             )}
           </div>
         </div>
 
         {data.stock === 0 ? (
-          <p className="my-2 text-lg text-red-500">Out of Stock</p>
+          <p className="my-2 text-lg text-red-500">Hết hàng</p>
         ) : (
-          <button className='my-4 px-4 py-1 bg-green-600 hover:bg-green-700 text-white rounded'>Add</button>
+          <button className="my-4 rounded bg-green-600 px-4 py-1 text-white hover:bg-green-700">
+            Thêm vào giỏ hàng
+          </button>
           // <div className="my-4">
           //   <AddToCartButton data={data} />
           // </div>
         )}
 
-        <h2 className="font-semibold">Why shop from binkeyit? </h2>
+        <h2 className="font-semibold">Tại sao nên mua sắm tại Yumora? </h2>
         <div>
           <div className="my-4 flex items-center gap-4">
             <img src={image1} alt="superfast delivery" className="h-20 w-20" />
             <div className="text-sm">
-              <div className="font-semibold">Superfast Delivery</div>
+              <div className="font-semibold">Giao hàng siêu nhanh</div>
               <p>
-                Get your orer delivered to your doorstep at the earliest from
-                dark stores near you.
+                Nhận đơn hàng được giao đến tận nhà sớm nhất từ các cửa hàng tối
+                gần bạn.
               </p>
             </div>
           </div>
           <div className="my-4 flex items-center gap-4">
             <img src={image2} alt="Best prices offers" className="h-20 w-20" />
             <div className="text-sm">
-              <div className="font-semibold">Best Prices & Offers</div>
+              <div className="font-semibold">Giá tốt nhất và nhiều ưu đãi</div>
               <p>
-                Best price destination with offers directly from the
-                nanufacturers.
+                Điểm đến có giá tốt nhất với các ưu đãi trực tiếp từ nhà sản
+                xuất.
               </p>
             </div>
           </div>
           <div className="my-4 flex items-center gap-4">
             <img src={image3} alt="Wide Assortment" className="h-20 w-20" />
             <div className="text-sm">
-              <div className="font-semibold">Wide Assortment</div>
+              <div className="font-semibold">Nhiều mặt hàng</div>
               <p>
-                Choose from 5000+ products across food personal care, household
-                & other categories.
+              Chọn từ hơn 5000 sản phẩm trong danh mục thực phẩm, chăm sóc cá nhân, gia dụng
+              & các danh mục khác.
               </p>
             </div>
           </div>
@@ -206,11 +208,11 @@ const ProductDisplayPage = () => {
         {/****only mobile */}
         <div className="my-4 grid gap-3">
           <div>
-            <p className="font-semibold">Description</p>
+            <p className="font-semibold">Miêu tả</p>
             <p className="text-base">{data.description}</p>
           </div>
           <div>
-            <p className="font-semibold">Unit</p>
+            <p className="font-semibold">Khối lượng</p>
             <p className="text-base">{data.unit}</p>
           </div>
           {data?.more_details &&

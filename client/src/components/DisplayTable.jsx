@@ -18,7 +18,7 @@ const DisplayTable = ({ data, column }) => {
         <thead className="bg-black text-white">
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
-              <th>Sr.No</th>
+              <th>STT</th>
               {headerGroup.headers.map((header) => (
                 <th
                   key={header.id}

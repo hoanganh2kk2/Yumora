@@ -138,24 +138,24 @@ const UploadProduct = () => {
     }
   };
 
-  useEffect(()=>{
-    successAlert("Upload successfully")
-  },[])
+  useEffect(() => {
+    successAlert("Tải lên thành công");
+  }, []);
   return (
     <section>
       <div className="flex items-center justify-between bg-white p-2 shadow-md">
-        <h2 className="font-semibold">Upload Product</h2>
+        <h2 className="font-semibold">Tải sản phẩm lên</h2>
       </div>
       <div className="gird p-3">
         <form className="grid gap-4" onSubmit={handleSubmit}>
           <div className="grid gap-1">
             <label htmlFor="name" className="font-medium">
-              Name
+              Tên
             </label>
             <input
               id="name"
               type="text"
-              placeholder="Enter product name"
+              placeholder="Nhập tên sản phẩm"
               name="name"
               value={data.name}
               onChange={handleChange}
@@ -165,12 +165,12 @@ const UploadProduct = () => {
           </div>
           <div className="grid gap-1">
             <label htmlFor="description" className="font-medium">
-              Description
+              Miêu tả
             </label>
             <textarea
               id="description"
               type="text"
-              placeholder="Enter product description"
+              placeholder="Nhập miêu tả"
               name="description"
               value={data.description}
               onChange={handleChange}
@@ -181,7 +181,7 @@ const UploadProduct = () => {
             />
           </div>
           <div>
-            <p className="font-medium">Image</p>
+            <p className="font-medium">Hình ảnh</p>
             <div>
               <label
                 htmlFor="productImage"
@@ -194,7 +194,7 @@ const UploadProduct = () => {
                     <>
                       {" "}
                       <FaCloudUploadAlt size={35} />
-                      <p>Upload Image</p>
+                      <p>Tải hình ảnh lên</p>
                     </>
                   )}
                 </div>
@@ -235,7 +235,7 @@ const UploadProduct = () => {
             </div>
           </div>
           <div className="grid gap-1">
-            <label className="font-medium">Category</label>
+            <label className="font-medium">Loại sản phẩm</label>
             <div>
               <select
                 className="w-full rounded border border-slate-200 bg-blue-50 p-2"
@@ -253,7 +253,7 @@ const UploadProduct = () => {
                   setSelectCategory("");
                 }}
               >
-                <option value={""}>Select Category</option>
+                <option value={""}>Chọn loại sản phẩm</option>
                 {allCategory.map((c, index) => {
                   return <option value={c?._id}>{c.name}</option>;
                 })}
@@ -279,7 +279,7 @@ const UploadProduct = () => {
             </div>
           </div>
           <div className="grid gap-1">
-            <label className="font-medium">Sub Category</label>
+            <label className="font-medium">Danh mục sản phẩm</label>
             <div>
               <select
                 className="w-full rounded border border-slate-200 bg-blue-50 p-2"
@@ -300,7 +300,7 @@ const UploadProduct = () => {
                 }}
               >
                 <option value={""} className="text-neutral-600">
-                  Select Sub Category
+                  Chọn danh mục sản phẩm
                 </option>
                 {allSubCategory.map((c, index) => {
                   return <option value={c?._id}>{c.name}</option>;
@@ -328,12 +328,12 @@ const UploadProduct = () => {
           </div>
           <div className="grid gap-1">
             <label className="font-medium" htmlFor="unit">
-              Unit
+              Khối lượng
             </label>
             <input
               id="unit"
               type="text"
-              placeholder="Enter product unit"
+              placeholder="Nhập khối lượng sản phẩm"
               name="unit"
               value={data.unit}
               onChange={handleChange}
@@ -343,12 +343,12 @@ const UploadProduct = () => {
           </div>
           <div className="grid gap-1">
             <label className="font-medium" htmlFor="stock">
-              Number of Stock
+              Số lượng hàng
             </label>
             <input
               id="stock"
               type="number"
-              placeholder="Enter product stock"
+              placeholder="Nhập số lượng hàng"
               name="stock"
               value={data.stock}
               onChange={handleChange}
@@ -358,12 +358,12 @@ const UploadProduct = () => {
           </div>
           <div className="grid gap-1">
             <label className="font-medium" htmlFor="price">
-              Price
+              Giá
             </label>
             <input
               id="price"
               type="number"
-              placeholder="Enter product price"
+              placeholder="Nhập giá sản phẩm"
               name="price"
               value={data.price}
               onChange={handleChange}
@@ -373,12 +373,12 @@ const UploadProduct = () => {
           </div>
           <div className="grid gap-1">
             <label className="font-medium" htmlFor="discount">
-              Discount
+              Giảm giá
             </label>
             <input
               id="discount"
               type="number"
-              placeholder="Enter product discount"
+              placeholder="Nhập giảm giá sản phẩm"
               name="discount"
               value={data.discount}
               onChange={handleChange}
@@ -420,11 +420,11 @@ const UploadProduct = () => {
             onClick={() => setOpenAddField(true)}
             className="hover:bg-primary-200 border-primary-200 w-32 cursor-pointer rounded border bg-white px-3 py-1 text-center font-semibold hover:text-neutral-900"
           >
-            Add Fields
+            Thêm miêu tả
           </div>
 
           <button className="bg-primary-100 hover:bg-primary-200 rounded py-2 font-semibold">
-            Submit
+            Thêm sản phẩm
           </button>
         </form>
       </div>

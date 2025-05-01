@@ -43,7 +43,7 @@ const UserMenu = ({ close }) => {
   };
   return (
     <div>
-      <div className="font-semibold">My Account</div>
+      <div className="font-semibold">Tài khoản của bạn</div>
       <div className="flex items-center gap-2 text-sm">
         <span className="line-clamp-1 max-w-52 text-ellipsis">
           {user.name || user.mobile}{" "}
@@ -69,7 +69,7 @@ const UserMenu = ({ close }) => {
             to={"/dashboard/category"}
             className="px-2 py-1 hover:bg-orange-200"
           >
-            Category
+            Loại sản phẩm
           </Link>
         )}
 
@@ -79,7 +79,7 @@ const UserMenu = ({ close }) => {
             to={"/dashboard/subcategory"}
             className="px-2 py-1 hover:bg-orange-200"
           >
-            Sub Category
+            Danh mục sản phẩm
           </Link>
         )}
 
@@ -89,7 +89,7 @@ const UserMenu = ({ close }) => {
             to={"/dashboard/upload-product"}
             className="px-2 py-1 hover:bg-orange-200"
           >
-            Upload Product
+            Tải sản phẩm lên
           </Link>
         )}
 
@@ -99,7 +99,7 @@ const UserMenu = ({ close }) => {
             to={"/dashboard/product"}
             className="px-2 py-1 hover:bg-orange-200"
           >
-            Product
+            Sản phẩm
           </Link>
         )}
 
@@ -108,7 +108,7 @@ const UserMenu = ({ close }) => {
           to={"/dashboard/myorders"}
           className="px-2 py-1 hover:bg-orange-200"
         >
-          My Orders
+          Đơn hàng của tôi
         </Link>
 
         <Link
@@ -116,14 +116,14 @@ const UserMenu = ({ close }) => {
           to={"/dashboard/address"}
           className="px-2 py-1 hover:bg-orange-200"
         >
-          Save Address
+          Địa chỉ
         </Link>
 
         <button
           onClick={handleLogout}
           className="px-2 py-1 text-left hover:bg-orange-200"
         >
-          Log Out
+          Đăng xuất
         </button>
       </div>
     </div>

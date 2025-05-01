@@ -60,7 +60,7 @@ const UserProfileAvatarEdit = ({ close }) => {
         <form onSubmit={handleSubmit}>
           <label htmlFor="uploadProfile">
             <div className="border-primary-200 hover:bg-primary-200 my-3 cursor-pointer rounded border px-4 py-1 text-sm">
-              {loading ? "Loading..." : "Upload"}
+              {loading ? "Đang tải..." : "Tải lên"}
             </div>
             <input
               onChange={handleUploadAvatarImage}

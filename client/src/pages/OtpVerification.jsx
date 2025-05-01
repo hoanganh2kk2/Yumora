@@ -97,10 +97,10 @@ const OtpVerification = () => {
   return (
     <section className="container mx-auto w-full px-2">
       <div className="mx-auto my-4 w-full max-w-lg rounded bg-white p-7">
-        <p className="text-lg font-semibold">Enter OTP</p>
+        <p className="text-lg font-semibold">Nhập mã OTP</p>
         <form className="grid gap-4 py-4" onSubmit={handleSubmit}>
           <div className="grid gap-1">
-            <label htmlFor="otp">Enter Your OTP :</label>
+            <label htmlFor="otp">Nhập mã OTP của bạn :</label>
             <div className="mt-3 flex items-center justify-between gap-2">
               {data.map((element, index) => {
                 return (
@@ -158,7 +158,7 @@ const OtpVerification = () => {
           </div>
 
           <p className="text-sm">
-            Didn't receive OTP?
+            Không nhận được mã OTP ?
             <button
               className={`ml-2 font-semibold ${
                 isResending
@@ -168,7 +168,7 @@ const OtpVerification = () => {
               onClick={handleResendOtp}
               disabled={isResending}
             >
-              {isResending ? "Resending..." : "Resend OTP"}
+              {isResending ? "Đang gửi lại ..." : "Gửi lại mã OTP"}
             </button>
           </p>
 
@@ -176,17 +176,17 @@ const OtpVerification = () => {
             disabled={!validValue|| isSubmitting}
             className={` ${validValue ? "bg-green-800 hover:bg-green-700" : "bg-gray-500"} my-3 rounded py-2 font-semibold tracking-wide text-white`}
           >
-            {isSubmitting ? "Verifying..." : "Verify OTP"}
+            {isSubmitting ? "Đang xác minh..." : "Xác minh OTP"}
           </button>
         </form>
 
         <p>
-          Already have account ?
+          Đã có tài khoản ?
           <Link
             to={"/login"}
             className="font-semibold text-green-700 hover:text-green-800"
           >
-            Login
+            Đăng nhập
           </Link>
         </p>
       </div>

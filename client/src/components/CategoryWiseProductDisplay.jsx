@@ -69,7 +69,7 @@ const CategoryWiseProductDisplay = ({ id, name }) => {
       <div className="container mx-auto flex items-center justify-between gap-4 p-4">
         <h3 className="text-lg font-semibold md:text-xl">{name}</h3>
         <Link to={redirectURL} className="text-green-600 hover:text-green-400">
-          See All
+          Xem tất cả
         </Link>
       </div>
       <div className="relative flex items-center">

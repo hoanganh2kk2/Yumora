@@ -68,18 +68,18 @@ const UploadCategoryModel = ({ close, fetchData }) => {
     <section className="fixed top-0 right-0 bottom-0 left-0 flex items-center justify-center bg-neutral-800/60 p-4">
       <div className="w-full max-w-4xl rounded bg-white p-4">
         <div className="flex items-center justify-between">
-          <h1 className="font-semibold">Category</h1>
+          <h1 className="font-semibold">Loại sản phẩm</h1>
           <button onClick={close} className="ml-auto block w-fit">
             <IoClose size={25} />
           </button>
         </div>
         <form className="my-3 grid gap-2" onSubmit={handleSubmit}>
           <div className="grid gap-1">
-            <label id="categoryName">Name</label>
+            <label id="categoryName">Tên</label>
             <input
               type="text"
               id="categoryName"
-              placeholder="Enter category name"
+              placeholder="Nhập tên loại sản phẩm"
               value={data.name}
               name="name"
               onChange={handleOnChange}
@@ -87,9 +87,9 @@ const UploadCategoryModel = ({ close, fetchData }) => {
             />
           </div>
           <div className="grid gap-1">
-            <p>Image</p>
+            <p>Hình ảnh</p>
             <div className="flex flex-col items-center gap-4 lg:flex-row">
-              <div className="flex h-36 w-full items-center justify-center rounded border bg-blue-50 lg:w-36">
+              <div className="flex h-36 w-full items-center justify-center rounded border border-slate-200 bg-blue-50 lg:w-36">
                 {data.image ? (
                   <img
                     alt="category"
@@ -97,14 +97,14 @@ const UploadCategoryModel = ({ close, fetchData }) => {
                     className="h-full w-full object-scale-down"
                   />
                 ) : (
-                  <p className="text-sm text-neutral-500">No Image</p>
+                  <p className="text-sm text-neutral-500">Không có hình ảnh</p>
                 )}
               </div>
               <label htmlFor="uploadCategoryImage">
                 <div
-                  className={` ${!data.name ? "bg-gray-300" : "border-primary-200 hover:bg-primary-100"} cursor-pointer rounded border px-4 py-2 font-medium`}
+                  className={` ${!data.name ? "border-slate-200 bg-gray-300" : "border-primary-200 hover:bg-primary-100"} cursor-pointer rounded border px-4 py-2 font-medium`}
                 >
-                  Upload Image
+                  Tải hình ảnh lên
                 </div>
 
                 <input
@@ -121,7 +121,7 @@ const UploadCategoryModel = ({ close, fetchData }) => {
           <button
             className={` ${data.name && data.image ? "bg-primary-200 hover:bg-primary-100" : "bg-gray-300"} py-2 font-semibold`}
           >
-            Add Category
+            Thêm loại sản phẩm
           </button>
         </form>
       </div>

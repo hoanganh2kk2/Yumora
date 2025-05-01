@@ -6,7 +6,7 @@ const AddFieldComponent = ({ close, value, onChange, submit }) => {
     <section className="fixed top-0 right-0 bottom-0 left-0 z-50 flex items-center justify-center bg-neutral-900/70 p-4">
       <div className="w-full max-w-md rounded bg-white p-4">
         <div className="flex items-center justify-between gap-3">
-          <h1 className="font-semibold">Add Field</h1>
+          <h1 className="font-semibold">Thêm</h1>
           <button onClick={close}>
             <IoClose size={25} />
           </button>
@@ -21,7 +21,7 @@ const AddFieldComponent = ({ close, value, onChange, submit }) => {
           onClick={submit}
           className="bg-primary-200 hover:bg-primary-100 mx-auto block w-fit rounded px-4 py-2"
         >
-          Add Field
+          Thêm
         </button>
       </div>
     </section>

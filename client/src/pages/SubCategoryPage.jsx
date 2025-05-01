@@ -141,12 +141,12 @@ const SubCategoryPage = () => {
   return (
     <section>
       <div className="flex items-center justify-between bg-white p-2 shadow-md">
-        <h2 className="font-semibold">Sub Category</h2>
+        <h2 className="font-semibold">Danh mục sản phẩm</h2>
         <button
           onClick={() => setOpenAddSubCategory(true)}
           className="border-primary-200 hover:bg-primary-200 rounded border px-3 py-1 text-sm"
         >
-          Add Sub Category
+          Thêm danh mục sản phẩm
         </button>
       </div>
 

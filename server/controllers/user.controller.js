@@ -15,7 +15,7 @@ export async function registerUserController(request, response) {
 
     if (!name || !email || !password) {
       return response.status(400).json({
-        message: "provide email, name, password",
+        message: "Cung cấp email, tên, mật khẩu",
         error: true,
         success: false,
       });
@@ -25,7 +25,7 @@ export async function registerUserController(request, response) {
 
     if (user) {
       return response.json({
-        message: "Already register email",
+        message: "Đã đăng ký email",
         error: true,
         success: false,
       });
@@ -47,7 +47,7 @@ export async function registerUserController(request, response) {
 
     const verityEmail = await sendEmail({
       sendTo: email,
-      subject: "Verify email from binkeyit",
+      subject: "Xác minh email",
       html: verityEmailTemplate({
         name,
         url: VerifyEmailUrl,
@@ -55,7 +55,7 @@ export async function registerUserController(request, response) {
     });
 
     return response.json({
-      message: "User register successfull",
+      message: "Đăng ký thành công",
       error: false,
       success: true,
       data: save,
@@ -75,9 +75,9 @@ export async function verifyEmailController(request, response) {
 
     const user = await UserModel.findOne({ _id: code });
 
-    if (user) {
+    if (!user) {
       return response.status(400).json({
-        message: "Invalid code",
+        message: "Mã không hợp lệ",
         error: true,
         success: false,
       });
@@ -91,7 +91,7 @@ export async function verifyEmailController(request, response) {
     );
 
     return response.json({
-      message: "Verify email done",
+      message: "Xác minh email thành công",
       success: true,
       error: false,
     });
@@ -111,7 +111,7 @@ export async function loginController(request, response) {
 
     if (!email || !password) {
       return response.status(400).json({
-        message: "provide email, password",
+        message: "Cung cấp email, mật khẩu",
         error: true,
         success: false,
       });
@@ -121,7 +121,7 @@ export async function loginController(request, response) {
 
     if (!user) {
       return response.status(400).json({
-        message: "User not register",
+        message: "Chưa đăng ký tài khoản",
         error: true,
         success: false,
       });
@@ -129,7 +129,7 @@ export async function loginController(request, response) {
 
     if (user.status !== "Active") {
       return response.status(400).json({
-        message: "Contact to Admin",
+        message: "Liên hệ Admin",
         error: true,
         success: false,
       });
@@ -138,7 +138,7 @@ export async function loginController(request, response) {
     const checkPassword = await bcryptjs.compare(password, user.password);
     if (!checkPassword) {
       return response.status(400).json({
-        message: "Check your password",
+        message: "Kiểm tra mật khẩu của bạn",
         error: true,
         success: false,
       });
@@ -160,7 +160,7 @@ export async function loginController(request, response) {
     });
 
     return response.json({
-      message: "Login successfully",
+      message: "Đăng nhập thành công",
       error: false,
       success: true,
       data: {
@@ -195,7 +195,7 @@ export async function logoutController(request, response) {
     });
 
     return response.json({
-      message: "Logout successfully",
+      message: "Đăng suất thành công",
       error: false,
       success: true,
     });
@@ -221,7 +221,7 @@ export async function uploadAvatar(request, response) {
     });
 
     return response.json({
-      message: "upload profile",
+      message: "Tải lên hồ sơ",
       success: true,
       error: false,
       data: {
@@ -262,7 +262,7 @@ export async function updateUserDetails(request, response) {
     );
 
     return response.json({
-      message: "Updated successfully",
+      message: "Đã cập nhật thành công",
       error: false,
       success: true,
       data: updateUser,
@@ -285,7 +285,7 @@ export async function forgotPasswordController(request, response) {
 
     if (!user) {
       return response.status(400).json({
-        message: "Email not available",
+        message: "Email không có sẵn",
         error: true,
         success: false,
       });
@@ -309,7 +309,7 @@ export async function forgotPasswordController(request, response) {
     });
 
     return response.json({
-      message: "check your email",
+      message: "Kiểm tra email của bạn",
       error: false,
       success: true,
     });
@@ -329,7 +329,7 @@ export async function verifyForgotPasswordOtp(request, response) {
 
     if (!email || !otp) {
       return response.status(400).json({
-        message: "Provide required field email, otp.",
+        message: "Cung cấp email, mã OTP",
         error: true,
         success: false,
       });
@@ -339,7 +339,7 @@ export async function verifyForgotPasswordOtp(request, response) {
 
     if (!user) {
       return response.status(400).json({
-        message: "Email not available",
+        message: "Email không có sẵn",
         error: true,
         success: false,
       });
@@ -349,7 +349,7 @@ export async function verifyForgotPasswordOtp(request, response) {
 
     if (user.forgot_password_expiry < currentTime) {
       return response.status(400).json({
-        message: "Otp is expired",
+        message: "Otp đã hết hạn",
         error: true,
         success: false,
       });
@@ -357,7 +357,7 @@ export async function verifyForgotPasswordOtp(request, response) {
 
     if (otp !== user.forgot_password_otp) {
       return response.status(400).json({
-        message: "Invalid otp",
+        message: "OTP không hợp lệ",
         error: true,
         success: false,
       });
@@ -372,7 +372,7 @@ export async function verifyForgotPasswordOtp(request, response) {
     });
 
     return response.json({
-      message: "Verify otp successfully",
+      message: "Xác minh Otp thành công",
       error: false,
       success: true,
     });
@@ -392,7 +392,7 @@ export async function resetPassword(request, response) {
 
     if (!email || !newPassword || !confirmPassword) {
       return response.status(400).json({
-        message: "provide required fields email, newPassword, confirmPassword",
+        message: "Cung cập email, mật khẩu",
       });
     }
 
@@ -400,7 +400,7 @@ export async function resetPassword(request, response) {
 
     if (!user) {
       return response.status(400).json({
-        message: "Email is not available",
+        message: "Email không có sẵn",
         error: true,
         success: false,
       });
@@ -408,7 +408,7 @@ export async function resetPassword(request, response) {
 
     if (newPassword !== confirmPassword) {
       return response.status(400).json({
-        message: "newPassword and confirmPassword must be same.",
+        message: "Mật khẩu không khớp.",
         error: true,
         success: false,
       });
@@ -417,12 +417,12 @@ export async function resetPassword(request, response) {
     const salt = await bcryptjs.genSalt(10);
     const hashPassword = await bcryptjs.hash(newPassword, salt);
 
-    const update = await UserModel.findOneAndUpdate(user._id, {
+    const update = await UserModel.findByIdAndUpdate(user._id, {
       password: hashPassword,
     });
 
     return response.json({
-      message: "Password updated successfully.",
+      message: "Đã cập nhật mật khẩu thành công.",
       error: false,
       success: true,
     });
@@ -444,7 +444,7 @@ export async function refreshToken(request, response) {
 
     if (!refreshToken) {
       return response.status(401).json({
-        message: "Invalid token",
+        message: "Mã thông báo không hợp lệ",
         error: true,
         success: false,
       });
@@ -457,7 +457,7 @@ export async function refreshToken(request, response) {
 
     if (!verifyToken) {
       return response.status(401).json({
-        message: "token is expired",
+        message: "Mã thông báo đã hết hạn",
         error: true,
         success: false,
       });
@@ -476,7 +476,7 @@ export async function refreshToken(request, response) {
     response.cookie("accessToken", newAccessToken, cookiesOption);
 
     return response.json({
-      message: "New Access token generated",
+      message: "Mã thông báo truy cập mới được tạo",
       error: false,
       success: true,
       data: {
@@ -504,14 +504,14 @@ export async function userDetails(request, response) {
     );
 
     return response.json({
-      message: "user details",
+      message: "Chi tiết người dùng",
       data: user,
       error: false,
       success: true,
     });
   } catch (error) {
     return response.status(500).json({
-      message: "Something is wrong",
+      message: "Có gì đó không ổn",
       error: true,
       success: false,
     });

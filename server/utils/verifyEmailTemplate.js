@@ -1,9 +1,9 @@
 const verifyEmailTemplate = ({ name, url }) => {
   return `
-<p>Dear ${name}</p>    
-<p>Thank you for registering Binkeyit.</p>   
+<p>Gửi ${name}</p>    
+<p>Cảm ơn bạn đã đăng ký Yumora.</p>   
 <a href=${url} style="color:black;background :orange;margin-top : 10px,padding:20px,display:block">
-  Verify Email
+  Xác minh email
 </a>
 `;
 };

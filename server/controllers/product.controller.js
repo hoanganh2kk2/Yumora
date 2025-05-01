@@ -25,7 +25,7 @@ export const createProductController = async (request, response) => {
       !description
     ) {
       return response.status(400).json({
-        message: "Enter required fields",
+        message: "Nhập các trường bắt buộc",
         error: true,
         success: false,
       });
@@ -46,7 +46,7 @@ export const createProductController = async (request, response) => {
     const saveProduct = await product.save();
 
     return response.json({
-      message: "Product Created Successfully",
+      message: "Đã tạo sản phẩm thành công",
       data: saveProduct,
       error: false,
       success: true,
@@ -92,7 +92,7 @@ export const getProductController = async (request, response) => {
     ]);
 
     return response.json({
-      message: "Product data",
+      message: "Dữ liệu sản phẩm",
       error: false,
       success: true,
       totalCount: totalCount,
@@ -114,7 +114,7 @@ export const getProductByCategory = async (request, response) => {
 
     if (!id) {
       return response.status(400).json({
-        message: "provide category id",
+        message: "Cung cấp id loại sản phẩm",
         error: true,
         success: false,
       });
@@ -125,7 +125,7 @@ export const getProductByCategory = async (request, response) => {
     }).limit(15);
 
     return response.json({
-      message: "category product list",
+      message: "Danh sách loại sản phẩm",
       data: product,
       error: false,
       success: true,
@@ -145,7 +145,7 @@ export const getProductByCategoryAndSubCategory = async (request, response) => {
 
     if (!categoryId || !subCategoryId) {
       return response.status(400).json({
-        message: "Provide categoryId and subCategoryId",
+        message: "Cung cấp categoryId và subCategoryId",
         error: true,
         success: false,
       });
@@ -172,7 +172,7 @@ export const getProductByCategoryAndSubCategory = async (request, response) => {
     ]);
 
     return response.json({
-      message: "Product list",
+      message: "Danh sách sản phẩm",
       data: data,
       totalCount: dataCount,
       page: page,
@@ -196,7 +196,7 @@ export const getProductDetails = async (request, response) => {
     const product = await ProductModel.findOne({ _id: productId });
 
     return response.json({
-      message: "product details",
+      message: "Chi tiết sản phẩm",
       data: product,
       error: false,
       success: true,
@@ -217,7 +217,7 @@ export const updateProductDetails = async (request, response) => {
 
     if (!_id) {
       return response.status(400).json({
-        message: "provide product _id",
+        message: "Cung cấp id sản phẩm",
         error: true,
         success: false,
       });
@@ -231,7 +231,7 @@ export const updateProductDetails = async (request, response) => {
     );
 
     return response.json({
-      message: "updated successfully",
+      message: "Cập nhật thành công",
       data: updateProduct,
       error: false,
       success: true,
@@ -252,7 +252,7 @@ export const deleteProductDetails = async (request, response) => {
 
     if (!_id) {
       return response.status(400).json({
-        message: "provide _id ",
+        message: "Cung cấp _id ",
         error: true,
         success: false,
       });
@@ -261,7 +261,7 @@ export const deleteProductDetails = async (request, response) => {
     const deleteProduct = await ProductModel.deleteOne({ _id: _id });
 
     return response.json({
-      message: "Delete successfully",
+      message: "Xóa thành công",
       error: false,
       success: true,
       data: deleteProduct,

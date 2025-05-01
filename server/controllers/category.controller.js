@@ -9,7 +9,7 @@ export const AddCategoryController = async (request, response) => {
 
     if (!name || !image) {
       return response.status(400).json({
-        message: "Enter required fields",
+        message: "Nhập các trường bắt buộc",
         error: true,
         success: false,
       });
@@ -24,14 +24,14 @@ export const AddCategoryController = async (request, response) => {
 
     if (!saveCategory) {
       return response.status(500).json({
-        message: "Not Created",
+        message: "Chưa được tạo",
         error: true,
         success: false,
       });
     }
 
     return response.json({
-      message: "Add Category",
+      message: "Thêm loại sản phẩm",
       data: saveCategory,
       success: true,
       error: false,
@@ -78,7 +78,7 @@ export const updateCategoryController = async (request, response) => {
     );
 
     return response.json({
-      message: "Updated Category",
+      message: "Đã cập nhật loại sản phẩm",
       success: true,
       error: false,
       data: update,
@@ -110,7 +110,7 @@ export const deleteCategoryController = async (request, response) => {
 
     if (checkSubCategory > 0 || checkProduct > 0) {
       return response.status(400).json({
-        message: "Category is already use can't delete",
+        message: "Loại sản phẩm đã được sử dụng không thể xóa",
         error: true,
         success: false,
       });
@@ -119,7 +119,7 @@ export const deleteCategoryController = async (request, response) => {
     const deleteCategory = await CategoryModel.deleteOne({ _id: _id });
 
     return response.json({
-      message: "Delete category successfully",
+      message: "Xóa loại sản phẩm thành công",
       data: deleteCategory,
       error: false,
       success: true,

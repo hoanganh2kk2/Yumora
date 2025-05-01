@@ -108,7 +108,7 @@ const EditProductAdmin = ({ close, data: propsData, fetchProductData }) => {
   };
 
   const handleSubmit = async (e) => {
-    e.prentDefault();
+    e.preventDefault();
     console.log("data", data);
 
     try {
@@ -147,7 +147,7 @@ const EditProductAdmin = ({ close, data: propsData, fetchProductData }) => {
       <div className="mx-auto h-full max-h-[95vh] w-full max-w-2xl overflow-y-auto rounded bg-white p-4">
         <section className="">
           <div className="flex items-center justify-between bg-white p-2 shadow-md">
-            <h2 className="font-semibold">Upload Product</h2>
+            <h2 className="font-semibold">Sửa thông tin sản phẩm</h2>
             <button onClick={close}>
               <IoClose size={20} />
             </button>
@@ -156,12 +156,12 @@ const EditProductAdmin = ({ close, data: propsData, fetchProductData }) => {
             <form className="grid gap-4" onSubmit={handleSubmit}>
               <div className="grid gap-1">
                 <label htmlFor="name" className="font-medium">
-                  Name
+                  Tên
                 </label>
                 <input
                   id="name"
                   type="text"
-                  placeholder="Enter product name"
+                  placeholder="Nhập tên sản phẩm"
                   name="name"
                   value={data.name}
                   onChange={handleChange}
@@ -171,12 +171,12 @@ const EditProductAdmin = ({ close, data: propsData, fetchProductData }) => {
               </div>
               <div className="grid gap-1">
                 <label htmlFor="description" className="font-medium">
-                  Description
+                  Miêu tả
                 </label>
                 <textarea
                   id="description"
                   type="text"
-                  placeholder="Enter product description"
+                  placeholder="Nhập miêu tả sản phẩm"
                   name="description"
                   value={data.description}
                   onChange={handleChange}
@@ -187,7 +187,7 @@ const EditProductAdmin = ({ close, data: propsData, fetchProductData }) => {
                 />
               </div>
               <div>
-                <p className="font-medium">Image</p>
+                <p className="font-medium">Hình ảnh</p>
                 <div>
                   <label
                     htmlFor="productImage"
@@ -199,7 +199,7 @@ const EditProductAdmin = ({ close, data: propsData, fetchProductData }) => {
                       ) : (
                         <>
                           <FaCloudUploadAlt size={35} />
-                          <p>Upload Image</p>
+                          <p>Tải hình ảnh lên</p>
                         </>
                       )}
                     </div>
@@ -238,7 +238,7 @@ const EditProductAdmin = ({ close, data: propsData, fetchProductData }) => {
                 </div>
               </div>
               <div className="grid gap-1">
-                <label className="font-medium">Category</label>
+                <label className="font-medium">Loại sản phẩm</label>
                 <div>
                   <select
                     className="w-full rounded border border-slate-200 bg-blue-50 p-2"
@@ -258,7 +258,7 @@ const EditProductAdmin = ({ close, data: propsData, fetchProductData }) => {
                       setSelectCategory("");
                     }}
                   >
-                    <option value={""}>Select Category</option>
+                    <option value={""}>Chọn loại sản phẩm</option>
                     {allCategory.map((c, index) => {
                       return <option value={c?._id}>{c.name}</option>;
                     })}
@@ -284,7 +284,7 @@ const EditProductAdmin = ({ close, data: propsData, fetchProductData }) => {
                 </div>
               </div>
               <div className="grid gap-1">
-                <label className="font-medium">Sub Category</label>
+                <label className="font-medium">Danh mục sản phẩm</label>
                 <div>
                   <select
                     className="w-full rounded border border-slate-200 bg-blue-50 p-2"
@@ -305,7 +305,7 @@ const EditProductAdmin = ({ close, data: propsData, fetchProductData }) => {
                     }}
                   >
                     <option value={""} className="text-neutral-600">
-                      Select Sub Category
+                      Chọn danh mục sản phẩm
                     </option>
                     {allSubCategory.map((c, index) => {
                       return <option value={c?._id}>{c.name}</option>;
@@ -334,12 +334,12 @@ const EditProductAdmin = ({ close, data: propsData, fetchProductData }) => {
 
               <div className="grid gap-1">
                 <label htmlFor="unit" className="font-medium">
-                  Unit
+                  Khối lượng
                 </label>
                 <input
                   id="unit"
                   type="text"
-                  placeholder="Enter product unit"
+                  placeholder="Nhập khối lượng sản phẩm"
                   name="unit"
                   value={data.unit}
                   onChange={handleChange}
@@ -350,12 +350,12 @@ const EditProductAdmin = ({ close, data: propsData, fetchProductData }) => {
 
               <div className="grid gap-1">
                 <label htmlFor="stock" className="font-medium">
-                  Number of Stock
+                  Số lượng sản phẩm
                 </label>
                 <input
                   id="stock"
                   type="number"
-                  placeholder="Enter product stock"
+                  placeholder="Nhập số lượng sản phẩm"
                   name="stock"
                   value={data.stock}
                   onChange={handleChange}
@@ -366,12 +366,12 @@ const EditProductAdmin = ({ close, data: propsData, fetchProductData }) => {
 
               <div className="grid gap-1">
                 <label htmlFor="price" className="font-medium">
-                  Price
+                  Giá tiền
                 </label>
                 <input
                   id="price"
                   type="number"
-                  placeholder="Enter product price"
+                  placeholder="Nhập giá sản phẩm"
                   name="price"
                   value={data.price}
                   onChange={handleChange}
@@ -382,12 +382,12 @@ const EditProductAdmin = ({ close, data: propsData, fetchProductData }) => {
 
               <div className="grid gap-1">
                 <label htmlFor="discount" className="font-medium">
-                  Discount
+                  Giảm giá
                 </label>
                 <input
                   id="discount"
                   type="number"
-                  placeholder="Enter product discount"
+                  placeholder="Nhập giảm giá sản phẩm"
                   name="discount"
                   value={data.discount}
                   onChange={handleChange}
@@ -430,11 +430,11 @@ const EditProductAdmin = ({ close, data: propsData, fetchProductData }) => {
                 onClick={() => setOpenAddField(true)}
                 className="hover:bg-primary-200 border-primary-200 w-32 cursor-pointer rounded border bg-white px-3 py-1 text-center font-semibold hover:text-neutral-900"
               >
-                Add Fields
+                Thêm
               </div>
 
               <button className="bg-primary-100 hover:bg-primary-200 rounded py-2 font-semibold">
-                Update Product
+                Cập nhật
               </button>
             </form>
           </div>

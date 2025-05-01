@@ -76,7 +76,7 @@ const Profile = () => {
         onClick={() => setProfileAvatarEdit(true)}
         className="border-primary-100 hover:border-primary-200 hover:bg-primary-200 mt-3 min-w-20 rounded-full border px-3 py-1 text-sm"
       >
-        Edit
+        Chỉnh sửa
       </button>
 
       {openProfileAvatarEdit && (
@@ -86,11 +86,11 @@ const Profile = () => {
       {/**name, mobile , email, change password */}
       <form className="my-4 grid gap-4" onSubmit={handleSubmit}>
         <div className="grid">
-          <label>Name</label>
+          <label>Tên</label>
           <input
             type="text"
-            placeholder="Enter your name"
-            className="focus-within:border-primary-200 rounded border bg-blue-50 p-2 outline-none"
+            placeholder="Nhập tên của bạn"
+            className="focus-within:border-primary-200 rounded border border-r-slate-200 bg-blue-50 p-2 outline-none"
             value={userData.name}
             name="name"
             onChange={handleOnChange}
@@ -102,8 +102,8 @@ const Profile = () => {
           <input
             type="email"
             id="email"
-            placeholder="Enter your email"
-            className="focus-within:border-primary-200 rounded border bg-blue-50 p-2 outline-none"
+            placeholder="Nhập email của bạn"
+            className="focus-within:border-primary-200 rounded border border-slate-200 bg-blue-50 p-2 outline-none"
             value={userData.email}
             name="email"
             onChange={handleOnChange}
@@ -111,12 +111,12 @@ const Profile = () => {
           />
         </div>
         <div className="grid">
-          <label htmlFor="mobile">Mobile</label>
+          <label htmlFor="mobile">Số điện thoại</label>
           <input
             type="text"
             id="mobile"
-            placeholder="Enter your mobile"
-            className="focus-within:border-primary-200 rounded border bg-blue-50 p-2 outline-none"
+            placeholder="Nhập số điện thoại của bạn"
+            className="focus-within:border-primary-200 rounded border border-slate-200 bg-blue-50 p-2 outline-none"
             value={userData.mobile}
             name="mobile"
             onChange={handleOnChange}
@@ -125,7 +125,7 @@ const Profile = () => {
         </div>
 
         <button className="hover:bg-primary-100 border-primary-100 text-primary-200 rounded border px-4 py-2 font-semibold hover:text-neutral-800">
-          {loading ? "Loading..." : "Submit"}
+          {loading ? "Đang tải..." : "Gửi"}
         </button>
       </form>
     </div>

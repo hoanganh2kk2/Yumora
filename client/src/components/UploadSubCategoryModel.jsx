@@ -85,14 +85,14 @@ const UploadSubCategoryModel = ({ close, fetchData }) => {
     <section className="fixed top-0 right-0 bottom-0 left-0 z-50 flex items-center justify-center bg-neutral-800/70 p-4">
       <div className="w-full max-w-5xl rounded bg-white p-4">
         <div className="flex items-center justify-between gap-3">
-          <h1 className="font-semibold">Add Sub Category</h1>
+          <h1 className="font-semibold">Thêm danh mục sản phẩm</h1>
           <button onClick={close}>
             <IoClose size={25} />
           </button>
         </div>
         <form className="my-3 grid gap-3" onSubmit={handleSubmitSubCategory}>
           <div className="grid gap-1">
-            <label htmlFor="name">Name</label>
+            <label htmlFor="name">Tên</label>
             <input
               id="name"
               name="name"
@@ -102,11 +102,11 @@ const UploadSubCategoryModel = ({ close, fetchData }) => {
             />
           </div>
           <div className="grid gap-1">
-            <p>Image</p>
+            <p>Hình ảnh</p>
             <div className="flex flex-col items-center gap-3 lg:flex-row">
               <div className="flex h-36 w-full items-center justify-center border border-slate-200 bg-blue-50 lg:w-36">
                 {!subCategoryData.image ? (
-                  <p className="text-sm text-neutral-400">No Image</p>
+                  <p className="text-sm text-neutral-400">Không có hình ảnh</p>
                 ) : (
                   <img
                     alt="subCategory"
@@ -117,7 +117,7 @@ const UploadSubCategoryModel = ({ close, fetchData }) => {
               </div>
               <label htmlFor="uploadSubCategoryImage">
                 <div className="border-primary-100 text-primary-200 hover:bg-primary-200 cursor-pointer rounded border px-4 py-1 hover:text-neutral-900">
-                  Upload Image
+                  Tải hình ảnh lên
                 </div>
                 <input
                   type="file"
@@ -129,7 +129,7 @@ const UploadSubCategoryModel = ({ close, fetchData }) => {
             </div>
           </div>
           <div className="grid gap-1">
-            <label>Select Category</label>
+            <label>Chọn loại sản phẩm</label>
             <div className="focus-within:border-primary-200 rounded border border-slate-200">
               {/*display value**/}
               <div className="flex flex-wrap gap-2">
@@ -168,7 +168,7 @@ const UploadSubCategoryModel = ({ close, fetchData }) => {
                   });
                 }}
               >
-                <option value={""}>Select Category</option>
+                <option value={""}>Chọn loại sản phẩm</option>
                 {allCategory.map((category, index) => {
                   return (
                     <option
@@ -186,7 +186,7 @@ const UploadSubCategoryModel = ({ close, fetchData }) => {
           <button
             className={`border border-slate-200 px-4 py-2 ${subCategoryData?.name && subCategoryData?.image && subCategoryData?.category[0] ? "bg-primary-200 hover:bg-primary-100" : "bg-gray-200"} font-semibold`}
           >
-            Submit
+            Thêm danh mục 
           </button>
         </form>
       </div>

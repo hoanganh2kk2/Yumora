@@ -67,11 +67,11 @@ const Register = () => {
   return (
     <section className="container mx-auto w-full px-2">
       <div className="mx-auto my-4 w-full max-w-lg rounded bg-white p-7">
-        <p>Welcome to Binkeyit</p>
+        <p className="font-semibold">Chào mừng đến với Yumora</p>
 
         <form className="mt-6 grid gap-4" onSubmit={handleSubmit}>
           <div className="grid gap-1">
-            <label htmlFor="name">Name :</label>
+            <label htmlFor="name">Họ và Tên :</label>
             <input
               type="text"
               id="name"
@@ -80,7 +80,7 @@ const Register = () => {
               name="name"
               value={data.name}
               onChange={handleChange}
-              placeholder="Enter your name"
+              placeholder="Nhập họ và tên của bạn"
             />
           </div>
           <div className="grid gap-1">
@@ -92,11 +92,11 @@ const Register = () => {
               name="email"
               value={data.email}
               onChange={handleChange}
-              placeholder="Enter your email"
+              placeholder="Nhập email của bạn"
             />
           </div>
           <div className="grid gap-1">
-            <label htmlFor="password">Password :</label>
+            <label htmlFor="password">Mật khẩu :</label>
             <div className="focus-within:border-primary-200 flex items-center rounded border border-slate-200 bg-blue-50 p-2">
               <input
                 type={showPassword ? "text" : "password"}
@@ -105,7 +105,7 @@ const Register = () => {
                 name="password"
                 value={data.password}
                 onChange={handleChange}
-                placeholder="Enter your password"
+                placeholder="Nhập mật khẩu của bạn"
               />
               <div
                 onClick={() => setShowPassword((pre) => !pre)}
@@ -116,7 +116,7 @@ const Register = () => {
             </div>
           </div>
           <div className="grid gap-1">
-            <label htmlFor="confirmPassword">Confirm Password :</label>
+            <label htmlFor="confirmPassword">Nhập lại mật khẩu :</label>
             <div className="focus-within:border-primary-200 flex items-center rounded border border-slate-200 bg-blue-50 p-2">
               <input
                 type={showConfirmPassword ? "text" : "password"}
@@ -125,7 +125,7 @@ const Register = () => {
                 name="confirmPassword"
                 value={data.confirmPassword}
                 onChange={handleChange}
-                placeholder="Enter your confirm password"
+                placeholder="Nhập mật khẩu của bạn"
               />
               <div
                 onClick={() => setShowConfirmPassword((pre) => !pre)}
@@ -140,17 +140,17 @@ const Register = () => {
             disabled={!validValue}
             className={` ${validValue ? "bg-green-800 hover:bg-green-700" : "bg-gray-500"} my-3 rounded py-2 font-semibold tracking-wide text-white`}
           >
-            Register
+            Đăng ký
           </button>
         </form>
 
         <p>
-          Already have account ?
+          Đã có tài khoản ?
           <Link
             to={"/login"}
             className="font-semibold text-green-700 hover:text-green-800"
           >
-            Login
+            Đăng nhập
           </Link>
         </p>
       </div>

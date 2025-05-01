@@ -56,7 +56,7 @@ const ForgotPassWord = () => {
   return (
     <section className="container mx-auto w-full px-2">
       <div className="mx-auto my-4 w-full max-w-lg rounded bg-white p-7">
-        <p className="text-lg font-semibold">Forgot Password</p>
+        <p className="text-lg font-semibold">Quên mật khẩu</p>
         <form className="grid gap-4 py-4" onSubmit={handleSubmit}>
           <div className="grid gap-1">
             <label htmlFor="email">Email :</label>
@@ -68,7 +68,7 @@ const ForgotPassWord = () => {
               name="email"
               value={data.email}
               onChange={handleChange}
-              placeholder="Enter your email"
+              placeholder="Nhập email của bạn"
             />
           </div>
 
@@ -76,17 +76,17 @@ const ForgotPassWord = () => {
             disabled={!validValue}
             className={` ${validValue ? "bg-green-800 hover:bg-green-700" : "bg-gray-500"} my-3 rounded py-2 font-semibold tracking-wide text-white`}
           >
-            Send OTP
+            Gửi mã OTP
           </button>
         </form>
 
         <p>
-          Already have account ?
+          Đã có tài khoản ?
           <Link
             to={"/login"}
             className="font-semibold text-green-700 hover:text-green-800"
           >
-            Login
+            Đăng nhập
           </Link>
         </p>
       </div>

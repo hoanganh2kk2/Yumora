@@ -10,7 +10,7 @@ const AdminPermission = ({ children }) => {
       {isAdmin(user.role) ? (
         children
       ) : (
-        <p className="bg-red-100 p-4 text-red-600">Do not have permission</p>
+        <p className="bg-red-100 p-4 text-red-600">Không có sự cho phép</p>
       )}
     </>
   );

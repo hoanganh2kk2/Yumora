@@ -137,17 +137,17 @@ const ResetPassword = () => {
             disabled={!validValue}
             className={` ${validValue ? "bg-green-800 hover:bg-green-700" : "bg-gray-500"} my-3 rounded py-2 font-semibold tracking-wide text-white`}
           >
-            Change Password
+            Thay đổi mật khẩu
           </button>
         </form>
 
         <p>
-          Already have account ?
+          Đã có tài khoản ?
           <Link
             to={"/login"}
             className="font-semibold text-green-700 hover:text-green-800"
           >
-            Login
+            Đăng nhập
           </Link>
         </p>
       </div>

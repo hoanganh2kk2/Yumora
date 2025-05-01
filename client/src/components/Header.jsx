@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import logo from "../assets/logo.png";
+import logo from "../assets/LogoYumora.png";
 import Search from "./Search";
 import UserMenu from "./UserMenu";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -81,7 +81,7 @@ const Header = () => {
                     onClick={() => setOpenUserMenu((pre) => !pre)}
                     className="flex cursor-pointer items-center gap-1 select-none"
                   >
-                    <p>Account</p>
+                    <p>Tài khoản</p>
                     {openUserMenu ? (
                       <GoTriangleUp size={25} />
                     ) : (
@@ -101,7 +101,7 @@ const Header = () => {
                   onClick={redirectToLoginPage}
                   className="cursor-pointer px-2 text-lg"
                 >
-                  Login
+                  Đăng nhập
                 </button>
               )}
               <button className="flex items-center gap-2 rounded bg-green-800 px-3 py-3 text-white hover:bg-green-700">
@@ -110,7 +110,7 @@ const Header = () => {
                   <BsCart4 size={26} />
                 </div>
                 <div className="font-semibold">
-                  <p>My Cart</p>
+                  <p>Giỏ hàng</p>
                 </div>
               </button>
             </div>

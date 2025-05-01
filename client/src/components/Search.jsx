@@ -44,23 +44,21 @@ const Search = () => {
             <TypeAnimation
               sequence={[
                 // Same substring at the start will only be typed out once, initially
-                'Search "milk"',
+                'Tìm kiếm "Sữa"',
                 1000, // wait 1s before replacing "Mice" with "Hamsters"
-                'Search "bread"',
+                'Tìm kiếm "Bánh mì"',
                 1000,
-                'Search "sugar"',
+                'Tìm kiếm "Đường"',
                 1000,
-                'Search "panner"',
+                'Tìm kiếm "SôCôLa"',
                 1000,
-                'Search "chocolate"',
+                'Tìm kiếm "Sữa đông"',
                 1000,
-                'Search "curd"',
+                'Tìm kiếm "Cơm"',
                 1000,
-                'Search "rice"',
+                'Tìm kiếm "Trứng"',
                 1000,
-                'Search "egg"',
-                1000,
-                'Search "chips"',
+                'Tìm kiếm "Bim bim"',
               ]}
               wrapper="span"
               speed={50}
@@ -72,7 +70,7 @@ const Search = () => {
           <div className="h-full w-full">
             <input
               type="text"
-              placeholder="Search for atta dal and more."
+              placeholder="Tìm kiếm Bánh mì và nhiều hơn"
               autoFocus
               className="h-full w-full bg-transparent outline-none"
             />

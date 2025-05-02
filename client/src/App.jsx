@@ -14,6 +14,8 @@ import {
   setAllSubCategory,
   setLoadingCategory,
 } from "./store/productSlice";
+import GlobalProvider from "./provider/GlobalProvider";
+import CartMobileLink from "./components/CartMobile";
 
 function App() {
   const dispatch = useDispatch();
@@ -58,20 +60,21 @@ function App() {
   };
 
   useEffect(() => {
+    fetchUser();
     fetchCategory();
     fetchSubCategory();
-    fetchUser();
   }, []);
 
   return (
-    <>
+    <GlobalProvider>
       <Header />
       <main className="min-h-[78vh]">
         <Outlet />
       </main>
       <Footer />
       <Toaster />
-    </>
+      <CartMobileLink />
+    </GlobalProvider>
   );
 }
 

@@ -10,6 +10,7 @@ import image1 from "../assets/minute_delivery.png";
 import image2 from "../assets/Best_Prices_Offers.png";
 import image3 from "../assets/Wide_Assortment2.png";
 import { priceWithDiscount } from "../utils/PriceWithDiscount";
+import AddToCartButton from "../components/AddToCartButton";
 // import AddToCartButton from "../components/AddToCartButton";
 
 const ProductDisplayPage = () => {
@@ -163,12 +164,9 @@ const ProductDisplayPage = () => {
         {data.stock === 0 ? (
           <p className="my-2 text-lg text-red-500">Hết hàng</p>
         ) : (
-          <button className="my-4 rounded bg-green-600 px-4 py-1 text-white hover:bg-green-700">
-            Thêm vào giỏ hàng
-          </button>
-          // <div className="my-4">
-          //   <AddToCartButton data={data} />
-          // </div>
+          <div className="my-4">
+            <AddToCartButton data={data} />
+          </div>
         )}
 
         <h2 className="font-semibold">Tại sao nên mua sắm tại Yumora? </h2>

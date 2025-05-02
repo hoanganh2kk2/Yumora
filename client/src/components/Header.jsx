@@ -8,6 +8,9 @@ import useMobile from "../hooks/useMobile";
 import { BsCart4 } from "react-icons/bs";
 import { useSelector } from "react-redux";
 import { GoTriangleDown, GoTriangleUp } from "react-icons/go";
+import { DisplayPriceInRupees } from "../utils/DisplayPriceInRupees";
+import { useGlobalContext } from "../provider/GlobalProvider";
+import DisplayCartItem from "./DisplayCartItem";
 
 const Header = () => {
   const [isMobile] = useMobile();
@@ -16,6 +19,9 @@ const Header = () => {
   const navigate = useNavigate();
   const user = useSelector((state) => state?.user);
   const [openUserMenu, setOpenUserMenu] = useState(false);
+  const cartItem = useSelector((state) => state.cartItem.cart);
+  const { totalPrice, totalQty } = useGlobalContext();
+  const [openCartSection, setOpenCartSection] = useState(false);
 
   const redirectToLoginPage = () => {
     navigate("/login");
@@ -104,13 +110,23 @@ const Header = () => {
                   Đăng nhập
                 </button>
               )}
-              <button className="flex items-center gap-2 rounded bg-green-800 px-3 py-3 text-white hover:bg-green-700">
+              <button
+                onClick={() => setOpenCartSection(true)}
+                className="flex items-center gap-2 rounded bg-green-800 px-3 py-3 text-white hover:bg-green-700"
+              >
                 {/**add to cart icons */}
                 <div className="animate-bounce">
                   <BsCart4 size={26} />
                 </div>
-                <div className="font-semibold">
-                  <p>Giỏ hàng</p>
+                <div className="font-semibold text-sm">
+                  {cartItem[0] ? (
+                    <div>
+                      <p>{totalQty} Sản phẩm</p>
+                      <p>{DisplayPriceInRupees(totalPrice)}</p>
+                    </div>
+                  ) : (
+                    <p>Giỏ hàng</p>
+                  )}
                 </div>
               </button>
             </div>
@@ -121,6 +137,10 @@ const Header = () => {
       <div className="container mx-auto px-2 lg:hidden">
         <Search />
       </div>
+
+      {openCartSection && (
+        <DisplayCartItem close={() => setOpenCartSection(false)} />
+      )}
     </header>
   );
 };

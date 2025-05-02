@@ -1,11 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { DisplayPriceInRupees } from "../utils/DisplayPriceInRupees";
 import { Link } from "react-router-dom";
 import { validURLConvert } from "../utils/validURLConvert";
 import { priceWithDiscount } from "../utils/PriceWithDiscount";
+import AddToCartButton from "./AddToCartButton";
 
 const CardProduct = ({ data }) => {
   const url = `/product/${validURLConvert(data.name)}-${data._id}`;
+  const [loading, setLoading] = useState(false);
+
   return (
     <Link
       to={url}
@@ -47,9 +50,7 @@ const CardProduct = ({ data }) => {
           {data.stock == 0 ? (
             <p className="text-center text-sm text-red-500">Hết hàng</p>
           ) : (
-            <button className="rounded bg-green-600 px-2 py-1 text-white hover:bg-green-700 lg:px-4">
-              Thêm
-            </button>
+            <AddToCartButton data={data} />
           )}
         </div>
       </div>

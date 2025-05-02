@@ -6,6 +6,7 @@ import { handleAddItemCart } from "../store/cartProduct";
 import AxiosToastError from "../utils/AxiosToastError";
 import toast from "react-hot-toast";
 import { priceWithDiscount } from "../utils/PriceWithDiscount";
+import { handleAddAddress } from "../store/addressSlice";
 
 export const GlobalContext = createContext(null);
 
@@ -14,9 +15,10 @@ export const useGlobalContext = () => useContext(GlobalContext);
 const GlobalProvider = ({ children }) => {
   const dispatch = useDispatch();
   const [totalPrice, setTotalPrice] = useState(0);
-  const [notDiscountTotalPrice,setNotDiscountTotalPrice] = useState(0)
+  const [notDiscountTotalPrice, setNotDiscountTotalPrice] = useState(0);
   const [totalQty, setTotalQty] = useState(0);
   const cartItem = useSelector((state) => state.cartItem.cart);
+  const user = useSelector((state) => state?.user);
 
   const fetchCartItem = async () => {
     try {
@@ -27,7 +29,6 @@ const GlobalProvider = ({ children }) => {
 
       if (responseData.success) {
         dispatch(handleAddItemCart(responseData.data));
-        console.log(responseData);
       }
     } catch (error) {
       console.log(error);
@@ -75,10 +76,6 @@ const GlobalProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    fetchCartItem();
-  }, []);
-
-  useEffect(() => {
     const qty = cartItem.reduce((pre, curr) => {
       return pre + curr.quantity;
     }, 0);
@@ -94,20 +91,47 @@ const GlobalProvider = ({ children }) => {
     }, 0);
     setTotalPrice(tPrice);
 
-    const notDiscountPrice = cartItem.reduce((pre,curr)=>{
-      return pre + (curr?.productId?.price * curr.quantity)
-    },0)
-    setNotDiscountTotalPrice(notDiscountPrice)
+    const notDiscountPrice = cartItem.reduce((pre, curr) => {
+      return pre + curr?.productId?.price * curr.quantity;
+    }, 0);
+    setNotDiscountTotalPrice(notDiscountPrice);
   }, [cartItem]);
+
+  const handleLogoutOut = () => {
+    localStorage.clear();
+    dispatch(handleAddItemCart([]));
+  };
+
+  const fetchAddress = async () => {
+    try {
+      const response = await Axios({
+        ...SummaryApi.getAddress,
+      });
+      const { data: responseData } = response;
+
+      if (responseData.success) {
+        dispatch(handleAddAddress(responseData.data));
+      }
+    } catch (error) {
+      // AxiosToastError(error)
+    }
+  };
+
+  useEffect(() => {
+    fetchCartItem();
+    handleLogoutOut();
+    fetchAddress();
+  }, [user]);
   return (
     <GlobalContext.Provider
       value={{
         fetchCartItem,
         updateCartItem,
         deleteCartItem,
+        fetchAddress,
         totalPrice,
         totalQty,
-        notDiscountTotalPrice
+        notDiscountTotalPrice,
       }}
     >
       {children}

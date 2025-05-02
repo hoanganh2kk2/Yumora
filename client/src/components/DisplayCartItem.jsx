@@ -12,8 +12,6 @@ import toast from "react-hot-toast";
 
 const DisplayCartItem = ({ close }) => {
   const { notDiscountTotalPrice, totalPrice, totalQty } = useGlobalContext();
-  console.log(notDiscountTotalPrice);
-  
   const cartItem = useSelector((state) => state.cartItem.cart);
   const user = useSelector((state) => state.user);
   const navigate = useNavigate();
@@ -26,7 +24,7 @@ const DisplayCartItem = ({ close }) => {
       }
       return;
     }
-    toast("Please Login");
+    toast("Làm ơn đăng nhập");
   };
   return (
     <section className="fixed top-0 right-0 bottom-0 left-0 z-50 bg-neutral-900/70">

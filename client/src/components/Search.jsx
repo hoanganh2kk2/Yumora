@@ -10,6 +10,9 @@ const Search = () => {
   const location = useLocation();
   const [isSearchPage, setIsSearchPage] = useState(false);
   const [isMobile] = useMobile();
+  const params = useLocation();
+  const searchText = params.search.slice(3);
+  
 
   useEffect(() => {
     const isSearch = location.pathname === "/search";
@@ -20,12 +23,20 @@ const Search = () => {
     navigate("/search");
   };
 
+  const handleOnChange = (e) => {
+    const value = e.target.value;
+    const url = `/search?q=${value}`;
+    navigate(url);
+  };
 
   return (
     <div className="group focus-within:border-primary-200 flex h-11 w-full min-w-[300px] items-center overflow-hidden rounded-lg border border-slate-200 bg-slate-50 text-neutral-500 lg:h-12 lg:min-w-[420px]">
       <div>
         {isMobile && isSearchPage ? (
-          <Link to={"/"} className="group-focus-within:text-primary-200 m-1 flex h-full items-center justify-center rounded-full bg-white p-2 shadow-md">
+          <Link
+            to={"/"}
+            className="group-focus-within:text-primary-200 m-1 flex h-full items-center justify-center rounded-full bg-white p-2 shadow-md"
+          >
             <FaArrowLeft size={20} />
           </Link>
         ) : (
@@ -72,7 +83,9 @@ const Search = () => {
               type="text"
               placeholder="Tìm kiếm Bánh mì và nhiều hơn"
               autoFocus
+              defaultValue={searchText}
               className="h-full w-full bg-transparent outline-none"
+              onChange={handleOnChange}
             />
           </div>
         )}

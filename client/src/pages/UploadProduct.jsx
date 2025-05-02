@@ -10,7 +10,6 @@ import AddFieldComponent from "../components/AddFieldComponent";
 import Axios from "../utils/Axios";
 import SummaryApi from "../common/SummaryApi";
 import AxiosToastError from "../utils/AxiosToastError";
-import { useEffect } from "react";
 import successAlert from "../utils/SuccessAlert";
 
 const UploadProduct = () => {
@@ -138,9 +137,16 @@ const UploadProduct = () => {
     }
   };
 
-  useEffect(() => {
-    successAlert("Tải lên thành công");
-  }, []);
+  // useEffect(() => {
+  //   successAlert("Tải lên thành công");
+  // }, []);
+  const sortedCategories = [...allCategory].sort((a, b) =>
+    a.name.localeCompare(b.name),
+  );
+  const sortedSubCategories = [...allSubCategory].sort((a, b) =>
+    a.name.localeCompare(b.name),
+  );
+
   return (
     <section>
       <div className="flex items-center justify-between bg-white p-2 shadow-md">
@@ -242,7 +248,9 @@ const UploadProduct = () => {
                 value={selectCategory}
                 onChange={(e) => {
                   const value = e.target.value;
-                  const category = allCategory.find((el) => el._id === value);
+                  const category = sortedCategories.find(
+                    (el) => el._id === value,
+                  );
 
                   setData((pre) => {
                     return {
@@ -254,7 +262,7 @@ const UploadProduct = () => {
                 }}
               >
                 <option value={""}>Chọn loại sản phẩm</option>
-                {allCategory.map((c, index) => {
+                {sortedCategories.map((c, index) => {
                   return <option value={c?._id}>{c.name}</option>;
                 })}
               </select>
@@ -281,7 +289,7 @@ const UploadProduct = () => {
           <div className="grid gap-1">
             <label className="font-medium">Danh mục sản phẩm</label>
             <div>
-              <select
+              {/* <select
                 className="w-full rounded border border-slate-200 bg-blue-50 p-2"
                 value={selectSubCategory}
                 onChange={(e) => {
@@ -305,7 +313,46 @@ const UploadProduct = () => {
                 {allSubCategory.map((c, index) => {
                   return <option value={c?._id}>{c.name}</option>;
                 })}
+              </select> */}
+              <select
+                className="w-full rounded border border-slate-200 bg-blue-50 p-2"
+                value={selectSubCategory}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  const subCategory = sortedSubCategories.find(
+                    (el) => el._id === value,
+                  );
+
+                  if (
+                    subCategory &&
+                    !data.subCategory.find((sc) => sc._id === subCategory._id)
+                  ) {
+                    setData((pre) => ({
+                      ...pre,
+                      subCategory: [...pre.subCategory, subCategory],
+                    }));
+                  }
+
+                  setSelectSubCategory("");
+                }}
+              >
+                <option value={""} className="text-neutral-600">
+                  Chọn danh mục sản phẩm
+                </option>
+
+                {sortedSubCategories
+                  .filter((sc) =>
+                    data.category.some(
+                      (cat) => cat._id === sc.category[0]?._id,
+                    ),
+                  )
+                  .map((sc) => (
+                    <option key={sc._id} value={sc._id}>
+                      {sc.name}
+                    </option>
+                  ))}
               </select>
+
               <div className="flex flex-wrap gap-3">
                 {data.subCategory.map((c, index) => {
                   return (
@@ -418,9 +465,9 @@ const UploadProduct = () => {
 
           <div
             onClick={() => setOpenAddField(true)}
-            className="hover:bg-primary-200 border-primary-200 w-32 cursor-pointer rounded border bg-white px-3 py-1 text-center font-semibold hover:text-neutral-900"
+            className="hover:bg-primary-200 border-primary-200 w-36 cursor-pointer rounded border bg-white px-3 py-1 text-center font-semibold hover:text-neutral-900"
           >
-            Thêm miêu tả
+            Thêm thông tin
           </div>
 
           <button className="bg-primary-100 hover:bg-primary-200 rounded py-2 font-semibold">

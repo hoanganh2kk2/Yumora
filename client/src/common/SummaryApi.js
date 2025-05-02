@@ -103,7 +103,11 @@ const SummaryApi = {
   },
   deleteProduct: {
     url: "/api/product/delete-product",
-    method: "put",
+    method: "delete",
+  },
+  searchProduct: {
+    url: "/api/product/search-product",
+    method: "post",
   },
 };
 export default SummaryApi;

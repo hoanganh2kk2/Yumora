@@ -3,6 +3,12 @@ import { useGlobalContext } from "../provider/GlobalProvider";
 import { DisplayPriceInRupees } from "../utils/DisplayPriceInRupees";
 import AddAddress from "../components/AddAddress";
 import { useSelector } from "react-redux";
+import Axios from "../utils/Axios";
+import SummaryApi from "../common/SummaryApi";
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import AxiosToastError from "../utils/AxiosToastError";
+import {loadStripe} from "@stripe/stripe-js";
 
 const CheckoutPage = () => {
   const {
@@ -15,7 +21,70 @@ const CheckoutPage = () => {
   const [openAddress, setOpenAddress] = useState(false);
   const addressList = useSelector((state) => state.addresses.addressList);
   const [selectAddress, setSelectAddress] = useState(0);
+  const cartItemsList = useSelector((state) => state.cartItem.cart);
+  const navigate = useNavigate();
 
+  const handleCashOnDelivery = async () => {
+    try {
+      const response = await Axios({
+        ...SummaryApi.CashOnDeliveryOrder,
+        data: {
+          list_items: cartItemsList,
+          addressId: addressList[selectAddress]?._id,
+          subTotalAmt: totalPrice,
+          totalAmt: totalPrice,
+        },
+      });
+      const { data: responseData } = response;
+
+      if (responseData.success) {
+        toast.success(responseData.message);
+        if (fetchCartItem) {
+          fetchCartItem();
+        }
+        if (fetchOrder) {
+          fetchOrder();
+        }
+        navigate("/success", {
+          state: {
+            text: "Order",
+          },
+        });
+      }
+    } catch (error) {
+      AxiosToastError(error);
+    }
+  };
+
+  const handleOnlinePayment = async () => {
+    try {
+      toast.loading("Loading...");
+      const stripePublicKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
+      const stripePromise = await loadStripe(stripePublicKey);
+
+      const response = await Axios({
+        ...SummaryApi.payment_url,
+        data: {
+          list_items: cartItemsList,
+          addressId: addressList[selectAddress]?._id,
+          subTotalAmt: totalPrice,
+          totalAmt: totalPrice,
+        },
+      });
+      const { data: responseData } = response;
+
+      stripePromise.redirectToCheckout({ sessionId: responseData.id });
+
+      if (fetchCartItem) {
+        fetchCartItem();
+      }
+      if (fetchOrder) {
+        fetchOrder();
+      }
+    } catch (error) {
+      AxiosToastError(error);
+    }
+  };
   return (
     <section className="bg-blue-50">
       <div className="container mx-auto flex w-full flex-col justify-between gap-5 p-4 lg:flex-row">
@@ -90,10 +159,16 @@ const CheckoutPage = () => {
             </div>
           </div>
           <div className="flex w-full flex-col gap-4">
-            <button className="rounded bg-green-600 px-4 py-2 font-semibold text-white hover:bg-green-700">
+            <button
+              className="rounded bg-green-600 px-4 py-2 font-semibold text-white hover:bg-green-700"
+              onClick={handleOnlinePayment}
+            >
               Thanh toán Online
             </button>
-            <button className="border-2 border-green-600 px-4 py-2 font-semibold text-green-600 hover:bg-green-600 hover:text-white">
+            <button
+              className="border-2 border-green-600 px-4 py-2 font-semibold text-green-600 hover:bg-green-600 hover:text-white"
+              onClick={handleCashOnDelivery}
+            >
               Thanh toán khi nhận hàng
             </button>
           </div>

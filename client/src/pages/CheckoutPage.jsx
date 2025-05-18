@@ -1,90 +1,80 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useGlobalContext } from "../provider/GlobalProvider";
 import { DisplayPriceInRupees } from "../utils/DisplayPriceInRupees";
 import AddAddress from "../components/AddAddress";
 import { useSelector } from "react-redux";
 import Axios from "../utils/Axios";
 import SummaryApi from "../common/SummaryApi";
-import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import AxiosToastError from "../utils/AxiosToastError";
-import {loadStripe} from "@stripe/stripe-js";
+import { useNavigate } from "react-router-dom";
+import { priceWithDiscount } from "../utils/PriceWithDiscount";
+import Loading from "../components/Loading";
 
 const CheckoutPage = () => {
-  const {
-    notDiscountTotalPrice,
-    totalPrice,
-    totalQty,
-    fetchCartItem,
-    fetchOrder,
-  } = useGlobalContext();
+  const { notDiscountTotalPrice, totalPrice, totalQty, fetchCartItem } =
+    useGlobalContext();
   const [openAddress, setOpenAddress] = useState(false);
   const addressList = useSelector((state) => state.addresses.addressList);
-  const [selectAddress, setSelectAddress] = useState(0);
-  const cartItemsList = useSelector((state) => state.cartItem.cart);
+  const [selectedAddressId, setSelectedAddressId] = useState("");
+  const cartItems = useSelector((state) => state.cartItem.cart);
+  const [loadingCheckout, setLoadingCheckout] = useState(false);
   const navigate = useNavigate();
 
-  const handleCashOnDelivery = async () => {
+  useEffect(() => {
+    // Chọn địa chỉ đầu tiên mặc định nếu có
+    if (addressList.length > 0) {
+      const defaultAddress = addressList.find((addr) => addr.status);
+      if (defaultAddress) {
+        setSelectedAddressId(defaultAddress._id);
+      }
+    }
+  }, [addressList]);
+
+  const handleProcessOrder = async (paymentMethod) => {
+    if (!selectedAddressId) {
+      toast.error("Vui lòng chọn địa chỉ giao hàng");
+      return;
+    }
+
+    if (cartItems.length === 0) {
+      toast.error("Giỏ hàng của bạn đang trống");
+      return;
+    }
+
     try {
+      setLoadingCheckout(true);
+
+      // Chuẩn bị dữ liệu sản phẩm từ giỏ hàng
+      const products = cartItems.map((item) => ({
+        productId: item.productId._id,
+        quantity: item.quantity,
+        price: priceWithDiscount(item.productId.price, item.productId.discount),
+        name: item.productId.name,
+        image: item.productId.image,
+      }));
+
       const response = await Axios({
-        ...SummaryApi.CashOnDeliveryOrder,
+        ...SummaryApi.createOrder,
         data: {
-          list_items: cartItemsList,
-          addressId: addressList[selectAddress]?._id,
-          subTotalAmt: totalPrice,
-          totalAmt: totalPrice,
+          addressId: selectedAddressId,
+          paymentMethod: paymentMethod,
+          products: products,
         },
       });
-      const { data: responseData } = response;
 
-      if (responseData.success) {
-        toast.success(responseData.message);
-        if (fetchCartItem) {
-          fetchCartItem();
-        }
-        if (fetchOrder) {
-          fetchOrder();
-        }
-        navigate("/success", {
-          state: {
-            text: "Order",
-          },
-        });
+      if (response.data.success) {
+        toast.success("Đặt hàng thành công!");
+        fetchCartItem(); // Làm mới giỏ hàng
+        navigate("/dashboard/myorders");
       }
     } catch (error) {
       AxiosToastError(error);
+    } finally {
+      setLoadingCheckout(false);
     }
   };
 
-  const handleOnlinePayment = async () => {
-    try {
-      toast.loading("Loading...");
-      const stripePublicKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
-      const stripePromise = await loadStripe(stripePublicKey);
-
-      const response = await Axios({
-        ...SummaryApi.payment_url,
-        data: {
-          list_items: cartItemsList,
-          addressId: addressList[selectAddress]?._id,
-          subTotalAmt: totalPrice,
-          totalAmt: totalPrice,
-        },
-      });
-      const { data: responseData } = response;
-
-      stripePromise.redirectToCheckout({ sessionId: responseData.id });
-
-      if (fetchCartItem) {
-        fetchCartItem();
-      }
-      if (fetchOrder) {
-        fetchOrder();
-      }
-    } catch (error) {
-      AxiosToastError(error);
-    }
-  };
   return (
     <section className="bg-blue-50">
       <div className="container mx-auto flex w-full flex-col justify-between gap-5 p-4 lg:flex-row">
@@ -92,19 +82,29 @@ const CheckoutPage = () => {
           {/* address */}
           <h3 className="text-lg font-semibold">Chọn địa chỉ của bạn</h3>
           <div className="grid gap-4 bg-white p-2">
+            {addressList.filter((address) => address.status).length === 0 && (
+              <p className="p-4 text-center text-red-500">
+                Bạn chưa có địa chỉ giao hàng. Vui lòng thêm địa chỉ.
+              </p>
+            )}
+
             {addressList.map((address, index) => {
               return (
                 <label
+                  key={address._id || index}
                   htmlFor={"address" + index}
-                  className={!address.status && "hidden"}
+                  className={!address.status ? "hidden" : ""}
                 >
-                  <div className="flex gap-3 rounded border border-slate-200 p-3 hover:bg-blue-50">
+                  <div
+                    className={`flex gap-3 rounded border p-3 ${selectedAddressId === address._id ? "border-green-500 bg-green-50" : "border-slate-200 hover:bg-blue-50"}`}
+                  >
                     <div>
                       <input
                         id={"address" + index}
                         type="radio"
-                        value={index}
-                        onChange={(e) => setSelectAddress(e.target.value)}
+                        value={address._id}
+                        checked={selectedAddressId === address._id}
+                        onChange={() => setSelectedAddressId(address._id)}
                         name="address"
                       />
                     </div>
@@ -113,8 +113,7 @@ const CheckoutPage = () => {
                       <p>Thành phố: {address.city}</p>
                       <p>Tỉnh/Bang: {address.state}</p>
                       <p>
-                        Quốc gia:
-                        {address.country} - {address.pincode}
+                        Quốc gia: {address.country} - {address.pincode}
                       </p>
                       <p>Số điện thoại: {address.mobile}</p>
                     </div>
@@ -147,29 +146,44 @@ const CheckoutPage = () => {
             </div>
             <div className="ml-1 flex justify-between gap-4">
               <p>Tổng số lượng</p>
-              <p className="flex items-center gap-2">{totalQty} item</p>
+              <p className="flex items-center gap-2">{totalQty} sản phẩm</p>
             </div>
             <div className="ml-1 flex justify-between gap-4">
               <p>Phí giao hàng</p>
-              <p className="flex items-center gap-2">Free</p>
+              <p className="flex items-center gap-2">Miễn phí</p>
             </div>
             <div className="flex items-center justify-between gap-4 font-semibold">
               <p>Tổng cộng</p>
               <p>{DisplayPriceInRupees(totalPrice)}</p>
             </div>
           </div>
-          <div className="flex w-full flex-col gap-4">
+          <div className="mt-4 flex w-full flex-col gap-4">
             <button
-              className="rounded bg-green-600 px-4 py-2 font-semibold text-white hover:bg-green-700"
-              onClick={handleOnlinePayment}
+              onClick={() => handleProcessOrder("Online")}
+              disabled={
+                loadingCheckout || !selectedAddressId || cartItems.length === 0
+              }
+              className={`rounded ${
+                loadingCheckout || !selectedAddressId || cartItems.length === 0
+                  ? "cursor-not-allowed bg-gray-400"
+                  : "bg-green-600 hover:bg-green-700"
+              } px-4 py-3 font-semibold text-white`}
             >
-              Thanh toán Online
+              {loadingCheckout ? <Loading /> : "Thanh toán Online"}
             </button>
+
             <button
-              className="border-2 border-green-600 px-4 py-2 font-semibold text-green-600 hover:bg-green-600 hover:text-white"
-              onClick={handleCashOnDelivery}
+              onClick={() => handleProcessOrder("COD")}
+              disabled={
+                loadingCheckout || !selectedAddressId || cartItems.length === 0
+              }
+              className={`border-2 ${
+                loadingCheckout || !selectedAddressId || cartItems.length === 0
+                  ? "cursor-not-allowed border-gray-400 text-gray-400"
+                  : "border-green-600 text-green-600 hover:bg-green-600 hover:text-white"
+              } px-4 py-3 font-semibold`}
             >
-              Thanh toán khi nhận hàng
+              {loadingCheckout ? <Loading /> : "Thanh toán khi nhận hàng"}
             </button>
           </div>
         </div>

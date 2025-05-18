@@ -1,17 +1,24 @@
 import { Router } from "express";
 import auth from "../middleware/auth.js";
 import {
-  CashOnDeliveryOrderController,
-  getOrderDetailsController,
-  paymentController,
-  webhookStripe,
+  createOrderController,
+  getUserOrdersController,
+  getOrderDetailController,
+  cancelOrderController,
 } from "../controllers/order.controller.js";
 
 const orderRouter = Router();
 
-orderRouter.post("/cash-on-delivery", auth, CashOnDeliveryOrderController);
-orderRouter.post("/checkout", auth, paymentController);
-orderRouter.post("/webhook", webhookStripe);
-orderRouter.get("/order-list", auth, getOrderDetailsController);
+// Tạo đơn hàng mới
+orderRouter.post("/create", auth, createOrderController);
+
+// Lấy tất cả đơn hàng của người dùng
+orderRouter.get("/my-orders", auth, getUserOrdersController);
+
+// Lấy chi tiết đơn hàng
+orderRouter.get("/detail/:orderId", auth, getOrderDetailController);
+
+// Hủy đơn hàng
+orderRouter.put("/cancel", auth, cancelOrderController);
 
 export default orderRouter;

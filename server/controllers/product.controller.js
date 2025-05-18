@@ -15,6 +15,7 @@ export const createProductController = async (request, response) => {
       more_details,
     } = request.body;
 
+    // Kiểm tra các trường bắt buộc
     if (
       !name ||
       !image[0] ||
@@ -31,15 +32,46 @@ export const createProductController = async (request, response) => {
       });
     }
 
+    // Kiểm tra các giá trị số
+    if (stock !== undefined && (isNaN(stock) || Number(stock) < 0)) {
+      return response.status(400).json({
+        message: "Số lượng sản phẩm phải là số dương",
+        error: true,
+        success: false,
+      });
+    }
+
+    if (isNaN(price) || Number(price) <= 0) {
+      return response.status(400).json({
+        message: "Giá sản phẩm phải là số dương",
+        error: true,
+        success: false,
+      });
+    }
+
+    if (
+      discount !== undefined &&
+      (isNaN(discount) || Number(discount) < 0 || Number(discount) > 100)
+    ) {
+      return response.status(400).json({
+        message: "Giảm giá phải là số từ 0 đến 100",
+        error: true,
+        success: false,
+      });
+    }
+
     const product = new ProductModel({
       name,
       image,
       category,
       subCategory,
       unit,
-      stock,
-      price,
-      discount,
+      stock: Math.max(0, Number(stock)), // Đảm bảo giá trị không âm
+      price: Math.max(0.01, Number(price)), // Đảm bảo giá trị dương
+      discount:
+        discount !== undefined
+          ? Math.min(100, Math.max(0, Number(discount)))
+          : 0, // Đảm bảo giá trị từ 0-100
       description,
       more_details,
     });
@@ -213,7 +245,7 @@ export const getProductDetails = async (request, response) => {
 //update product
 export const updateProductDetails = async (request, response) => {
   try {
-    const { _id } = request.body;
+    const { _id, stock, price, discount } = request.body;
 
     if (!_id) {
       return response.status(400).json({
@@ -223,11 +255,52 @@ export const updateProductDetails = async (request, response) => {
       });
     }
 
+    // Kiểm tra các giá trị số
+    if (stock !== undefined && (isNaN(stock) || Number(stock) < 0)) {
+      return response.status(400).json({
+        message: "Số lượng sản phẩm phải là số dương",
+        error: true,
+        success: false,
+      });
+    }
+
+    if (price !== undefined && (isNaN(price) || Number(price) <= 0)) {
+      return response.status(400).json({
+        message: "Giá sản phẩm phải là số dương",
+        error: true,
+        success: false,
+      });
+    }
+
+    if (
+      discount !== undefined &&
+      (isNaN(discount) || Number(discount) < 0 || Number(discount) > 100)
+    ) {
+      return response.status(400).json({
+        message: "Giảm giá phải là số từ 0 đến 100",
+        error: true,
+        success: false,
+      });
+    }
+
+    // Chuẩn hóa dữ liệu trước khi cập nhật
+    const dataToUpdate = { ...request.body };
+
+    if (stock !== undefined) {
+      dataToUpdate.stock = Math.max(0, Number(stock));
+    }
+
+    if (price !== undefined) {
+      dataToUpdate.price = Math.max(0.01, Number(price));
+    }
+
+    if (discount !== undefined) {
+      dataToUpdate.discount = Math.min(100, Math.max(0, Number(discount)));
+    }
+
     const updateProduct = await ProductModel.updateOne(
       { _id: _id },
-      {
-        ...request.body,
-      }
+      dataToUpdate
     );
 
     return response.json({

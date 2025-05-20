@@ -22,6 +22,9 @@ import ProductListPage from "../pages/ProductListPage";
 import ProductDisplayPage from "../pages/ProductDisplayPage";
 import CartMobile from "../pages/CartMobile";
 import CheckoutPage from "../pages/CheckoutPage";
+import Success from "../pages/Success";
+import Cancel from "../pages/Cancel";
+import PaymentResult from "../pages/PaymentResult"; // Import trang kết quả thanh toán mới
 
 const router = createBrowserRouter([
   {
@@ -134,6 +137,18 @@ const router = createBrowserRouter([
       {
         path: "checkout",
         element: <CheckoutPage />,
+      },
+      {
+        path: "success",
+        element: <Success />,
+      },
+      {
+        path: "cancel",
+        element: <Cancel />,
+      },
+      {
+        path: "payment-result",
+        element: <PaymentResult />, // Thêm trang kết quả thanh toán mới
       },
     ],
   },

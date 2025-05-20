@@ -1,1 +1,1 @@
-# Yumora Full Stack MERN APPP
+# Yumora Full Stack MERN APP

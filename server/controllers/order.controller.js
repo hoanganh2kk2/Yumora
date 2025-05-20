@@ -2,6 +2,7 @@ import OrderModel from "../models/order.model.js";
 import CartProductModel from "../models/cartproduct.model.js";
 import UserModel from "../models/user.model.js";
 import { nanoid } from "nanoid";
+import vnpay from "../config/vnpay.js";
 
 // Tạo đơn hàng mới
 export const createOrderController = async (request, response) => {
@@ -36,7 +37,6 @@ export const createOrderController = async (request, response) => {
       subTotalAmt += itemTotal;
 
       // THAY ĐỔI: Thêm chỉ số vào orderId để đảm bảo duy nhất
-      // Giải pháp tạm thời nếu không thể xóa chỉ mục trong cơ sở dữ liệu
       const modifiedOrderId = `${uniqueOrderId}-${index + 1}`;
 
       // Tạo đơn hàng cho từng sản phẩm
@@ -52,7 +52,7 @@ export const createOrderController = async (request, response) => {
         price_per_unit: price,
         itemTotal,
         paymentMethod,
-        payment_status: paymentMethod === "COD" ? "Pending" : "Paid",
+        payment_status: paymentMethod === "COD" ? "Pending" : "Pending", // Thay đổi trạng thái cho Online payment
         delivery_address: addressId,
         order_status: "Processing",
       });
@@ -61,8 +61,8 @@ export const createOrderController = async (request, response) => {
       orderItems.push(savedItem);
     }
 
-    // Cập nhật tổng tiền (có thể thêm phí vận chuyển sau)
-    totalAmt = subTotalAmt; // Nếu có phí vận chuyển: subTotalAmt + shippingFee
+    // Cập nhật tổng tiền
+    totalAmt = subTotalAmt;
 
     // Cập nhật danh sách đơn hàng cho user
     const orderIds = orderItems.map((item) => item._id);
@@ -80,10 +80,46 @@ export const createOrderController = async (request, response) => {
       $set: { shopping_cart: [] },
     });
 
+    // Nếu thanh toán online, tạo URL thanh toán
+    if (paymentMethod === "Online") {
+      // Lấy địa chỉ IP của người dùng
+      const ipAddr =
+        request.headers["x-forwarded-for"] ||
+        request.connection.remoteAddress ||
+        request.socket.remoteAddress ||
+        request.connection.socket.remoteAddress;
+
+      // Tạo mô tả đơn hàng
+      const orderInfo = `Thanh toan don hang ${uniqueOrderId}`;
+
+      // Tạo URL thanh toán VNPay
+      const paymentUrl = vnpay.createPaymentUrl(
+        uniqueOrderId,
+        totalAmt,
+        orderInfo,
+        ipAddr,
+        process.env.VNPAY_RETURN_URL
+      );
+
+      return response.status(200).json({
+        message: "Đặt hàng thành công, chuyển đến trang thanh toán",
+        data: {
+          orderId: uniqueOrderId,
+          items: orderItems,
+          subTotalAmt,
+          totalAmt,
+          paymentUrl,
+        },
+        error: false,
+        success: true,
+      });
+    }
+
+    // Nếu thanh toán COD
     return response.status(200).json({
       message: "Đặt hàng thành công",
       data: {
-        orderId: uniqueOrderId, // Trả về orderId gốc trong phản hồi
+        orderId: uniqueOrderId,
         items: orderItems,
         subTotalAmt,
         totalAmt,
@@ -322,29 +358,5 @@ export const cancelOrderController = async (request, response) => {
       error: true,
       success: false,
     });
-  }
-};
-
-// Cập nhật mô hình đơn hàng để thêm các trường mới
-export const updateOrderModel = async () => {
-  try {
-    // Thêm các trường mới vào schema nếu cần
-    await OrderModel.updateMany(
-      { quantity: { $exists: false } },
-      {
-        $set: {
-          quantity: 1,
-          price_per_unit: 0,
-          itemTotal: 0,
-          order_status: "Processing",
-          paymentMethod: "COD",
-        },
-      }
-    );
-
-    return { success: true };
-  } catch (error) {
-    console.error("Error updating order model:", error);
-    return { success: false, error };
   }
 };

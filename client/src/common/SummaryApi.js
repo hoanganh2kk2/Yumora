@@ -141,7 +141,7 @@ const SummaryApi = {
     url: "/api/address/disable",
     method: "delete",
   },
-  // Các API mới cho đơn hàng
+  // Order APIs
   createOrder: {
     url: "/api/order/create",
     method: "post",
@@ -157,6 +157,15 @@ const SummaryApi = {
   cancelOrder: {
     url: "/api/order/cancel",
     method: "put",
+  },
+  // Các API mới cho VNPay
+  createPayment: {
+    url: "/api/payment/create-payment",
+    method: "post",
+  },
+  checkPaymentStatus: {
+    url: "/api/payment/check-status",
+    method: "get",
   },
 };
 export default SummaryApi;

@@ -64,9 +64,16 @@ const CheckoutPage = () => {
       });
 
       if (response.data.success) {
-        toast.success("Đặt hàng thành công!");
-        fetchCartItem(); // Làm mới giỏ hàng
-        navigate("/dashboard/myorders");
+        // Nếu là thanh toán Online, chuyển hướng đến trang thanh toán VNPay
+        if (paymentMethod === "Online") {
+          // Redirect đến URL thanh toán VNPay
+          window.location.href = response.data.data.paymentUrl;
+        } else {
+          // Nếu là COD, hiển thị thông báo và chuyển hướng
+          toast.success("Đặt hàng thành công!");
+          fetchCartItem(); // Làm mới giỏ hàng
+          navigate("/dashboard/myorders");
+        }
       }
     } catch (error) {
       AxiosToastError(error);
@@ -166,10 +173,10 @@ const CheckoutPage = () => {
               className={`rounded ${
                 loadingCheckout || !selectedAddressId || cartItems.length === 0
                   ? "cursor-not-allowed bg-gray-400"
-                  : "bg-green-600 hover:bg-green-700"
+                  : "bg-blue-600 hover:bg-blue-700"
               } px-4 py-3 font-semibold text-white`}
             >
-              {loadingCheckout ? <Loading /> : "Thanh toán Online"}
+              {loadingCheckout ? <Loading /> : "Thanh toán VNPay"}
             </button>
 
             <button

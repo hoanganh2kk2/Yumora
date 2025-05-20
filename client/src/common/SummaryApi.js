@@ -141,17 +141,22 @@ const SummaryApi = {
     url: "/api/address/disable",
     method: "delete",
   },
-  CashOnDeliveryOrder: {
-    url: "/api/order/cash-on-delivery",
+  // Các API mới cho đơn hàng
+  createOrder: {
+    url: "/api/order/create",
     method: "post",
   },
-  payment_url: {
-    url: "/api/order/checkout",
-    method: "post",
-  },
-  getOrderItems: {
-    url: "/api/order/order-list",
+  getMyOrders: {
+    url: "/api/order/my-orders",
     method: "get",
+  },
+  getOrderDetail: {
+    url: "/api/order/detail",
+    method: "get",
+  },
+  cancelOrder: {
+    url: "/api/order/cancel",
+    method: "put",
   },
 };
 export default SummaryApi;

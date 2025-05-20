@@ -25,7 +25,7 @@ const MyOrders = () => {
         ...SummaryApi.getMyOrders,
         params: {
           page: pagination.currentPage,
-          limit: 10,
+          limit: 2, // Hiển thị 6 đơn hàng mỗi trang
         },
       });
 
@@ -64,7 +64,7 @@ const MyOrders = () => {
         </div>
       ) : orders.length > 0 ? (
         <>
-          <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2">
             {orders.map((order, index) => (
               <OrderCard key={`${order.orderId}-${index}`} order={order} />
             ))}

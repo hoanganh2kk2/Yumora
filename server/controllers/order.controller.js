@@ -105,61 +105,88 @@ export const createOrderController = async (request, response) => {
 export const getUserOrdersController = async (request, response) => {
   try {
     const userId = request.userId; // Lấy từ middleware auth
-    const { page = 1, limit = 10 } = request.query;
+    const { page = 1, limit = 2 } = request.query; // Mặc định hiển thị 6 đơn hàng mỗi trang
 
-    const skip = (page - 1) * limit;
-
-    // THAY ĐỔI: Điều chỉnh cách tìm đơn hàng để tính đến tiền tố orderId
-    // Tìm tất cả đơn hàng của user và sắp xếp theo thời gian tạo mới nhất
-    const orders = await OrderModel.find({ userId })
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(parseInt(limit))
-      .populate("delivery_address");
-
-    // Nhóm các đơn hàng theo orderId, nhưng bỏ qua phần "-number" ở cuối
-    const groupedOrders = {};
-    orders.forEach((order) => {
-      // Tách phần tiền tố orderId (không có số thứ tự)
-      const baseOrderId = order.orderId.split("-").slice(0, -1).join("-");
-
-      if (!groupedOrders[baseOrderId]) {
-        groupedOrders[baseOrderId] = {
-          orderId: baseOrderId, // Sử dụng orderId gốc
-          items: [],
-          createdAt: order.createdAt,
-          status: order.order_status,
-          paymentMethod: order.paymentMethod,
-          payment_status: order.payment_status,
-          address: order.delivery_address,
-          totalAmount: 0,
-        };
-      }
-
-      groupedOrders[baseOrderId].items.push(order);
-      groupedOrders[baseOrderId].totalAmount += order.itemTotal || 0;
-    });
-
-    // Chuyển đổi object thành array để dễ xử lý ở frontend
-    const formattedOrders = Object.values(groupedOrders);
-
-    // Đếm tổng số đơn hàng để phân trang
-    // THAY ĐỔI: Đếm số lượng orderId duy nhất (không bao gồm số thứ tự)
+    // Tìm các đơn hàng duy nhất dựa trên mã đơn hàng gốc (loại bỏ chỉ số sản phẩm)
     const distinctOrderIds = await OrderModel.distinct("orderId", { userId });
-    const uniqueBaseOrderIds = new Set();
+
+    // Lọc các orderId gốc duy nhất
+    const uniqueBaseOrderIds = [];
+    const baseOrderIdSet = new Set();
+
     distinctOrderIds.forEach((orderId) => {
       const baseOrderId = orderId.split("-").slice(0, -1).join("-");
-      uniqueBaseOrderIds.add(baseOrderId);
+      if (!baseOrderIdSet.has(baseOrderId)) {
+        baseOrderIdSet.add(baseOrderId);
+        uniqueBaseOrderIds.push(baseOrderId);
+      }
     });
 
-    const totalOrders = uniqueBaseOrderIds.size;
+    // Sắp xếp theo thời gian mới nhất (dựa vào các đơn hàng đã lấy)
+    const orderInfos = [];
+    for (const baseOrderId of uniqueBaseOrderIds) {
+      const firstOrderItem = await OrderModel.findOne({
+        orderId: { $regex: new RegExp(`^${baseOrderId}-\\d+$`) },
+      }).sort({ createdAt: -1 });
+
+      if (firstOrderItem) {
+        orderInfos.push({
+          baseOrderId,
+          createdAt: firstOrderItem.createdAt,
+        });
+      }
+    }
+
+    // Sắp xếp theo thời gian tạo mới nhất
+    orderInfos.sort((a, b) => b.createdAt - a.createdAt);
+
+    // Tính toán phân trang
+    const totalOrders = uniqueBaseOrderIds.length;
+    const totalPages = Math.ceil(totalOrders / limit);
+    const startIndex = (page - 1) * limit;
+    const endIndex = Math.min(startIndex + parseInt(limit), orderInfos.length);
+
+    // Lấy các orderId cho trang hiện tại
+    const paginatedOrderIds = orderInfos
+      .slice(startIndex, endIndex)
+      .map((info) => info.baseOrderId);
+
+    // Kết quả trả về
+    const formattedOrders = [];
+
+    // Lấy chi tiết cho từng đơn hàng
+    for (const baseOrderId of paginatedOrderIds) {
+      const orderItems = await OrderModel.find({
+        userId,
+        orderId: { $regex: new RegExp(`^${baseOrderId}-\\d+$`) },
+      }).populate("delivery_address");
+
+      if (orderItems && orderItems.length > 0) {
+        // Tính tổng tiền đơn hàng
+        const totalAmount = orderItems.reduce(
+          (sum, item) => sum + (item.itemTotal || 0),
+          0
+        );
+
+        formattedOrders.push({
+          orderId: baseOrderId,
+          items: orderItems,
+          createdAt: orderItems[0].createdAt,
+          status: orderItems[0].order_status,
+          paymentMethod: orderItems[0].paymentMethod,
+          payment_status: orderItems[0].payment_status,
+          address: orderItems[0].delivery_address,
+          totalAmount,
+        });
+      }
+    }
 
     return response.status(200).json({
       message: "Lấy danh sách đơn hàng thành công",
       data: formattedOrders,
       pagination: {
         totalOrders,
-        totalPages: Math.ceil(totalOrders / limit),
+        totalPages,
         currentPage: parseInt(page),
         limit: parseInt(limit),
       },

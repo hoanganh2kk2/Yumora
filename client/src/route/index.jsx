@@ -24,7 +24,7 @@ import CartMobile from "../pages/CartMobile";
 import CheckoutPage from "../pages/CheckoutPage";
 import Success from "../pages/Success";
 import Cancel from "../pages/Cancel";
-import PaymentResult from "../pages/PaymentResult"; // Import trang kết quả thanh toán mới
+import PaymentResult from "../pages/PaymentResult";
 
 const router = createBrowserRouter([
   {
@@ -148,7 +148,7 @@ const router = createBrowserRouter([
       },
       {
         path: "payment-result",
-        element: <PaymentResult />, // Thêm trang kết quả thanh toán mới
+        element: <PaymentResult />,
       },
     ],
   },

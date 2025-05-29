@@ -7,52 +7,40 @@ import vnpay from "../config/vnpay.js";
 // Tạo đơn hàng mới
 export const createOrderController = async (request, response) => {
   try {
-    const userId = request.userId; // Lấy từ middleware auth
+    const userId = request.userId;
     const { addressId, paymentMethod, products } = request.body;
 
+    // Validation
     if (!addressId || !paymentMethod || !products || products.length === 0) {
       return response.status(400).json({
-        message:
-          "Vui lòng cung cấp địa chỉ giao hàng, phương thức thanh toán và sản phẩm",
+        message: "Vui lòng cung cấp đầy đủ thông tin đơn hàng",
         error: true,
         success: false,
       });
     }
 
-    // Tạo mã đơn hàng duy nhất với nanoid
-    const uniqueOrderId = `YM-${nanoid(10)}`;
+    // Tạo orderId duy nhất
+    const orderId = `YM-${nanoid(10)}`;
 
-    // Tính tổng tiền
-    let subTotalAmt = 0;
-    let totalAmt = 0;
-
-    // Tạo mảng chứa đơn hàng cho từng sản phẩm
+    // Tính tổng tiền và tạo order items
+    let totalAmount = 0;
     const orderItems = [];
 
-    for (const [index, item] of products.entries()) {
+    for (const item of products) {
       const { productId, quantity, price, name, image } = item;
-
-      // Tính tiền cho từng sản phẩm
       const itemTotal = price * quantity;
-      subTotalAmt += itemTotal;
+      totalAmount += itemTotal;
 
-      // THAY ĐỔI: Thêm chỉ số vào orderId để đảm bảo duy nhất
-      const modifiedOrderId = `${uniqueOrderId}-${index + 1}`;
-
-      // Tạo đơn hàng cho từng sản phẩm
       const orderItem = new OrderModel({
         userId,
-        orderId: modifiedOrderId, // Sử dụng orderId đã sửa đổi
+        orderId,
         productId,
-        product_details: {
-          name,
-          image,
-        },
+        product_details: { name, image },
         quantity,
         price_per_unit: price,
         itemTotal,
         paymentMethod,
-        payment_status: paymentMethod === "COD" ? "Pending" : "Pending", // Thay đổi trạng thái cho Online payment
+        payment_status: "Pending",
         delivery_address: addressId,
         order_status: "Processing",
       });
@@ -61,68 +49,55 @@ export const createOrderController = async (request, response) => {
       orderItems.push(savedItem);
     }
 
-    // Cập nhật tổng tiền
-    totalAmt = subTotalAmt;
-
-    // Cập nhật danh sách đơn hàng cho user
-    const orderIds = orderItems.map((item) => item._id);
+    // Cập nhật user order history
     await UserModel.findByIdAndUpdate(userId, {
-      $push: {
-        orderHistory: { $each: orderIds },
-      },
+      $push: { orderHistory: { $each: orderItems.map((item) => item._id) } },
     });
 
-    // Xóa giỏ hàng sau khi đặt hàng thành công
+    // Xóa giỏ hàng
     await CartProductModel.deleteMany({ userId });
+    await UserModel.findByIdAndUpdate(userId, { $set: { shopping_cart: [] } });
 
-    // Xóa sản phẩm khỏi danh sách shopping_cart của user
-    await UserModel.findByIdAndUpdate(userId, {
-      $set: { shopping_cart: [] },
-    });
-
-    // Nếu thanh toán online, tạo URL thanh toán
+    // Xử lý thanh toán
     if (paymentMethod === "Online") {
-      // Lấy địa chỉ IP của người dùng
       const ipAddr =
         request.headers["x-forwarded-for"] ||
         request.connection.remoteAddress ||
         request.socket.remoteAddress ||
-        request.connection.socket.remoteAddress;
+        "127.0.0.1";
 
-      // Tạo mô tả đơn hàng
-      const orderInfo = `Thanh toan don hang ${uniqueOrderId}`;
+      const orderInfo = `Thanh toan don hang ${orderId}`;
+      const returnUrl = `${process.env.FRONTEND_URL}/payment-result`;
 
-      // Tạo URL thanh toán VNPay
       const paymentUrl = vnpay.createPaymentUrl(
-        uniqueOrderId,
-        totalAmt,
+        orderId,
+        totalAmount,
         orderInfo,
         ipAddr,
-        process.env.VNPAY_RETURN_URL
+        returnUrl
       );
 
       return response.status(200).json({
-        message: "Đặt hàng thành công, chuyển đến trang thanh toán",
+        message: "Đơn hàng đã được tạo, chuyển đến trang thanh toán",
         data: {
-          orderId: uniqueOrderId,
-          items: orderItems,
-          subTotalAmt,
-          totalAmt,
+          orderId,
+          totalAmount,
           paymentUrl,
+          paymentMethod,
         },
         error: false,
         success: true,
       });
     }
 
-    // Nếu thanh toán COD
+    // COD payment
     return response.status(200).json({
       message: "Đặt hàng thành công",
       data: {
-        orderId: uniqueOrderId,
+        orderId,
+        totalAmount,
+        paymentMethod,
         items: orderItems,
-        subTotalAmt,
-        totalAmt,
       },
       error: false,
       success: true,
@@ -140,72 +115,38 @@ export const createOrderController = async (request, response) => {
 // Lấy danh sách đơn hàng của người dùng
 export const getUserOrdersController = async (request, response) => {
   try {
-    const userId = request.userId; // Lấy từ middleware auth
-    const { page = 1, limit = 2 } = request.query; // Mặc định hiển thị 6 đơn hàng mỗi trang
+    const userId = request.userId;
+    const { page = 1, limit = 6 } = request.query;
 
-    // Tìm các đơn hàng duy nhất dựa trên mã đơn hàng gốc (loại bỏ chỉ số sản phẩm)
+    // Tìm các orderId duy nhất
     const distinctOrderIds = await OrderModel.distinct("orderId", { userId });
 
-    // Lọc các orderId gốc duy nhất
-    const uniqueBaseOrderIds = [];
-    const baseOrderIdSet = new Set();
-
-    distinctOrderIds.forEach((orderId) => {
-      const baseOrderId = orderId.split("-").slice(0, -1).join("-");
-      if (!baseOrderIdSet.has(baseOrderId)) {
-        baseOrderIdSet.add(baseOrderId);
-        uniqueBaseOrderIds.push(baseOrderId);
-      }
-    });
-
-    // Sắp xếp theo thời gian mới nhất (dựa vào các đơn hàng đã lấy)
-    const orderInfos = [];
-    for (const baseOrderId of uniqueBaseOrderIds) {
-      const firstOrderItem = await OrderModel.findOne({
-        orderId: { $regex: new RegExp(`^${baseOrderId}-\\d+$`) },
-      }).sort({ createdAt: -1 });
-
-      if (firstOrderItem) {
-        orderInfos.push({
-          baseOrderId,
-          createdAt: firstOrderItem.createdAt,
-        });
-      }
-    }
-
-    // Sắp xếp theo thời gian tạo mới nhất
-    orderInfos.sort((a, b) => b.createdAt - a.createdAt);
-
-    // Tính toán phân trang
-    const totalOrders = uniqueBaseOrderIds.length;
+    const totalOrders = distinctOrderIds.length;
     const totalPages = Math.ceil(totalOrders / limit);
-    const startIndex = (page - 1) * limit;
-    const endIndex = Math.min(startIndex + parseInt(limit), orderInfos.length);
+    const skip = (page - 1) * limit;
 
-    // Lấy các orderId cho trang hiện tại
-    const paginatedOrderIds = orderInfos
-      .slice(startIndex, endIndex)
-      .map((info) => info.baseOrderId);
+    // Lấy orderId cho trang hiện tại
+    const paginatedOrderIds = distinctOrderIds.slice(
+      skip,
+      skip + parseInt(limit)
+    );
 
-    // Kết quả trả về
-    const formattedOrders = [];
+    const orders = [];
 
     // Lấy chi tiết cho từng đơn hàng
-    for (const baseOrderId of paginatedOrderIds) {
-      const orderItems = await OrderModel.find({
-        userId,
-        orderId: { $regex: new RegExp(`^${baseOrderId}-\\d+$`) },
-      }).populate("delivery_address");
+    for (const orderId of paginatedOrderIds) {
+      const orderItems = await OrderModel.find({ userId, orderId })
+        .populate("delivery_address")
+        .sort({ createdAt: -1 });
 
-      if (orderItems && orderItems.length > 0) {
-        // Tính tổng tiền đơn hàng
+      if (orderItems.length > 0) {
         const totalAmount = orderItems.reduce(
-          (sum, item) => sum + (item.itemTotal || 0),
+          (sum, item) => sum + item.itemTotal,
           0
         );
 
-        formattedOrders.push({
-          orderId: baseOrderId,
+        orders.push({
+          orderId,
           items: orderItems,
           createdAt: orderItems[0].createdAt,
           status: orderItems[0].order_status,
@@ -217,9 +158,12 @@ export const getUserOrdersController = async (request, response) => {
       }
     }
 
+    // Sắp xếp theo thời gian tạo mới nhất
+    orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
     return response.status(200).json({
       message: "Lấy danh sách đơn hàng thành công",
-      data: formattedOrders,
+      data: orders,
       pagination: {
         totalOrders,
         totalPages,
@@ -230,6 +174,7 @@ export const getUserOrdersController = async (request, response) => {
       success: true,
     });
   } catch (error) {
+    console.error("Error getting user orders:", error);
     return response.status(500).json({
       message: error.message || "Đã xảy ra lỗi khi lấy danh sách đơn hàng",
       error: true,
@@ -238,10 +183,10 @@ export const getUserOrdersController = async (request, response) => {
   }
 };
 
-// Lấy chi tiết đơn hàng theo orderId
+// Lấy chi tiết đơn hàng
 export const getOrderDetailController = async (request, response) => {
   try {
-    const userId = request.userId; // Lấy từ middleware auth
+    const userId = request.userId;
     const { orderId } = request.params;
 
     if (!orderId) {
@@ -252,11 +197,9 @@ export const getOrderDetailController = async (request, response) => {
       });
     }
 
-    // THAY ĐỔI: Tìm tất cả sản phẩm trong đơn hàng có orderId bắt đầu bằng orderId gốc
-    const orderItems = await OrderModel.find({
-      userId,
-      orderId: { $regex: new RegExp(`^${orderId}-\\d+$`) },
-    }).populate("delivery_address productId");
+    const orderItems = await OrderModel.find({ userId, orderId }).populate(
+      "delivery_address productId"
+    );
 
     if (!orderItems || orderItems.length === 0) {
       return response.status(404).json({
@@ -266,15 +209,13 @@ export const getOrderDetailController = async (request, response) => {
       });
     }
 
-    // Tính tổng tiền đơn hàng
     const totalAmount = orderItems.reduce(
-      (sum, item) => sum + (item.itemTotal || 0),
+      (sum, item) => sum + item.itemTotal,
       0
     );
 
-    // Lấy thông tin chung của đơn hàng từ item đầu tiên
     const orderInfo = {
-      orderId, // Sử dụng orderId gốc
+      orderId,
       createdAt: orderItems[0].createdAt,
       status: orderItems[0].order_status,
       paymentMethod: orderItems[0].paymentMethod,
@@ -291,6 +232,7 @@ export const getOrderDetailController = async (request, response) => {
       success: true,
     });
   } catch (error) {
+    console.error("Error getting order detail:", error);
     return response.status(500).json({
       message: error.message || "Đã xảy ra lỗi khi lấy chi tiết đơn hàng",
       error: true,
@@ -302,7 +244,7 @@ export const getOrderDetailController = async (request, response) => {
 // Hủy đơn hàng
 export const cancelOrderController = async (request, response) => {
   try {
-    const userId = request.userId; // Lấy từ middleware auth
+    const userId = request.userId;
     const { orderId } = request.body;
 
     if (!orderId) {
@@ -313,12 +255,8 @@ export const cancelOrderController = async (request, response) => {
       });
     }
 
-    // THAY ĐỔI: Tìm và hủy tất cả các mục trong đơn hàng có orderId bắt đầu bằng orderId gốc
-    // Kiểm tra tình trạng đơn hàng
-    const order = await OrderModel.findOne({
-      userId,
-      orderId: { $regex: new RegExp(`^${orderId}-\\d+$`) },
-    });
+    // Kiểm tra đơn hàng tồn tại
+    const order = await OrderModel.findOne({ userId, orderId });
 
     if (!order) {
       return response.status(404).json({
@@ -328,7 +266,7 @@ export const cancelOrderController = async (request, response) => {
       });
     }
 
-    // Chỉ cho phép hủy đơn hàng nếu đang ở trạng thái "Processing"
+    // Chỉ cho phép hủy đơn hàng đang xử lý
     if (order.order_status !== "Processing") {
       return response.status(400).json({
         message: "Không thể hủy đơn hàng ở trạng thái này",
@@ -337,12 +275,9 @@ export const cancelOrderController = async (request, response) => {
       });
     }
 
-    // Cập nhật trạng thái cho tất cả sản phẩm trong đơn hàng
+    // Cập nhật trạng thái tất cả items trong đơn hàng
     const updateResult = await OrderModel.updateMany(
-      {
-        userId,
-        orderId: { $regex: new RegExp(`^${orderId}-\\d+$`) },
-      },
+      { userId, orderId },
       { $set: { order_status: "Cancelled" } }
     );
 
@@ -353,6 +288,7 @@ export const cancelOrderController = async (request, response) => {
       success: true,
     });
   } catch (error) {
+    console.error("Error cancelling order:", error);
     return response.status(500).json({
       message: error.message || "Đã xảy ra lỗi khi hủy đơn hàng",
       error: true,

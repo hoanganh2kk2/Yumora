@@ -14,20 +14,20 @@ export const createPaymentUrlController = async (request, response) => {
       });
     }
 
-    // Lấy IP của người dùng
     const ipAddr =
       request.headers["x-forwarded-for"] ||
       request.connection.remoteAddress ||
       request.socket.remoteAddress ||
-      request.connection.socket.remoteAddress;
+      "127.0.0.1";
 
-    // Tạo URL thanh toán
+    const returnUrl = `${process.env.FRONTEND_URL}/payment-result`;
+
     const paymentUrl = vnpay.createPaymentUrl(
       orderId,
       amount,
       orderInfo,
       ipAddr,
-      process.env.VNPAY_RETURN_URL
+      returnUrl
     );
 
     return response.json({
@@ -37,8 +37,9 @@ export const createPaymentUrlController = async (request, response) => {
       success: true,
     });
   } catch (error) {
+    console.error("Error creating payment URL:", error);
     return response.status(500).json({
-      message: error.message || error,
+      message: error.message || "Đã xảy ra lỗi khi tạo URL thanh toán",
       error: true,
       success: false,
     });
@@ -48,68 +49,76 @@ export const createPaymentUrlController = async (request, response) => {
 // Xử lý kết quả thanh toán từ VNPay
 export const vnpayReturnController = async (request, response) => {
   try {
-    const vnpParams = request.query;
+    const vnpParams = { ...request.query };
 
-    // Kiểm tra chữ ký từ VNPay
+    console.log("VNPay return params:", vnpParams);
+
+    // Kiểm tra chữ ký
     const isValidSignature = vnpay.verifyReturnUrl(vnpParams);
 
     if (!isValidSignature) {
-      return response.status(400).json({
-        message: "Chữ ký không hợp lệ",
-        error: true,
-        success: false,
-      });
+      console.error("Invalid VNPay signature");
+      return response.redirect(
+        `${process.env.FRONTEND_URL}/payment-result?status=error&message=invalid_signature`
+      );
     }
 
-    // Kiểm tra kết quả thanh toán
     const vnpResponseCode = vnpParams["vnp_ResponseCode"];
     const orderId = vnpParams["vnp_TxnRef"];
-    const amount = vnpParams["vnp_Amount"] / 100; // Chuyển về đơn vị tiền
+    const amount = vnpParams["vnp_Amount"] / 100;
+    const transactionNo = vnpParams["vnp_TransactionNo"];
 
-    // Nếu thanh toán thành công (mã 00)
+    console.log(
+      `Payment result: OrderId=${orderId}, ResponseCode=${vnpResponseCode}, Amount=${amount}`
+    );
+
+    // Kiểm tra đơn hàng tồn tại
+    const orderItems = await OrderModel.find({ orderId });
+
+    if (!orderItems || orderItems.length === 0) {
+      console.error(`Order not found: ${orderId}`);
+      return response.redirect(
+        `${process.env.FRONTEND_URL}/payment-result?status=error&message=order_not_found&orderId=${orderId}`
+      );
+    }
+
     if (vnpResponseCode === "00") {
-      // Cập nhật trạng thái thanh toán trong database
-      // Tìm tất cả sản phẩm trong đơn hàng
-      const orderItems = await OrderModel.find({
-        orderId: { $regex: new RegExp(`^${orderId}-\\d+$`) },
-      });
+      // Thanh toán thành công
+      await OrderModel.updateMany(
+        { orderId },
+        {
+          $set: {
+            payment_status: "Paid",
+            paymentId: transactionNo,
+            order_status: "Confirmed",
+          },
+        }
+      );
 
-      if (orderItems && orderItems.length > 0) {
-        // Cập nhật trạng thái thanh toán cho tất cả sản phẩm trong đơn hàng
-        await OrderModel.updateMany(
-          { orderId: { $regex: new RegExp(`^${orderId}-\\d+$`) } },
-          {
-            $set: {
-              payment_status: "Paid",
-              paymentId: vnpParams["vnp_TransactionNo"] || "",
-              order_status: "Confirmed",
-            },
-          }
-        );
+      console.log(`Payment successful for order: ${orderId}`);
 
-        return response.redirect(
-          `${process.env.FRONTEND_URL}/success?orderId=${orderId}`
-        );
-      } else {
-        return response.redirect(
-          `${process.env.FRONTEND_URL}/cancel?error=order_not_found`
-        );
-      }
+      return response.redirect(
+        `${process.env.FRONTEND_URL}/payment-result?status=success&orderId=${orderId}&amount=${amount}`
+      );
     } else {
       // Thanh toán thất bại
+      console.log(
+        `Payment failed for order: ${orderId}, code: ${vnpResponseCode}`
+      );
+
       return response.redirect(
-        `${process.env.FRONTEND_URL}/cancel?error=payment_failed&code=${vnpResponseCode}`
+        `${process.env.FRONTEND_URL}/payment-result?status=failed&orderId=${orderId}&code=${vnpResponseCode}`
       );
     }
   } catch (error) {
     console.error("VNPay return error:", error);
     return response.redirect(
-      `${process.env.FRONTEND_URL}/cancel?error=system_error`
+      `${process.env.FRONTEND_URL}/payment-result?status=error&message=system_error`
     );
   }
 };
 
-// API kiểm tra trạng thái thanh toán
+// Kiểm tra trạng thái thanh toán
 export const checkPaymentStatusController = async (request, response) => {
   try {
     const { orderId } = request.params;
@@ -122,10 +131,7 @@ export const checkPaymentStatusController = async (request, response) => {
       });
     }
 
-    // Kiểm tra trạng thái thanh toán trong database
-    const orderItem = await OrderModel.findOne({
-      orderId: { $regex: new RegExp(`^${orderId}-\\d+$`) },
-    });
+    const orderItem = await OrderModel.findOne({ orderId });
 
     if (!orderItem) {
       return response.status(404).json({
@@ -141,13 +147,17 @@ export const checkPaymentStatusController = async (request, response) => {
         orderId: orderId,
         paymentStatus: orderItem.payment_status,
         orderStatus: orderItem.order_status,
+        paymentMethod: orderItem.paymentMethod,
+        paymentId: orderItem.paymentId || "",
       },
       error: false,
       success: true,
     });
   } catch (error) {
+    console.error("Error checking payment status:", error);
     return response.status(500).json({
-      message: error.message || error,
+      message:
+        error.message || "Đã xảy ra lỗi khi kiểm tra trạng thái thanh toán",
       error: true,
       success: false,
     });

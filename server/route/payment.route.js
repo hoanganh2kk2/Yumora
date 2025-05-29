@@ -11,7 +11,7 @@ const paymentRouter = Router();
 // Tạo URL thanh toán VNPay
 paymentRouter.post("/create-payment", auth, createPaymentUrlController);
 
-// Xử lý kết quả thanh toán từ VNPay
+// Xử lý kết quả thanh toán từ VNPay (không cần auth vì đây là callback)
 paymentRouter.get("/vnpay-return", vnpayReturnController);
 
 // Kiểm tra trạng thái thanh toán

@@ -105,10 +105,30 @@ const SummaryApi = {
     url: "/api/product/delete-product",
     method: "delete",
   },
+
+  // Enhanced Search APIs
   searchProduct: {
     url: "/api/product/search-product",
     method: "post",
   },
+  searchAutoComplete: {
+    url: "/api/product/search-autocomplete",
+    method: "get",
+  },
+  getTrendingSearches: {
+    url: "/api/product/trending-searches",
+    method: "get",
+  },
+  getSearchFilters: {
+    url: "/api/product/search-filters",
+    method: "get",
+  },
+  // Backup basic search
+  searchProductBasic: {
+    url: "/api/product/search-product-basic",
+    method: "post",
+  },
+
   addToCart: {
     url: "/api/cart/create",
     method: "post",
@@ -141,7 +161,7 @@ const SummaryApi = {
     url: "/api/address/disable",
     method: "delete",
   },
-  // Order APIs - Đã cập nhật
+  // Order APIs
   createOrder: {
     url: "/api/order/create",
     method: "post",
@@ -158,7 +178,7 @@ const SummaryApi = {
     url: "/api/order/cancel",
     method: "put",
   },
-  // Payment APIs - Đã cập nhật
+  // Payment APIs
   createPayment: {
     url: "/api/payment/create-payment",
     method: "post",

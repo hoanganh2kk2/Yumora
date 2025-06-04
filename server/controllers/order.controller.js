@@ -1,8 +1,11 @@
+// server/controllers/order.controller.js
+
 import OrderModel from "../models/order.model.js";
 import CartProductModel from "../models/cartproduct.model.js";
 import UserModel from "../models/user.model.js";
 import { nanoid } from "nanoid";
 import vnpay from "../config/vnpay.js";
+import mongoose from "mongoose";
 
 // Tạo đơn hàng mới
 export const createOrderController = async (request, response) => {
@@ -112,29 +115,42 @@ export const createOrderController = async (request, response) => {
   }
 };
 
-// Lấy danh sách đơn hàng của người dùng
+// Lấy danh sách đơn hàng của người dùng - ĐÃ SỬA LOGIC PHÂN TRANG
 export const getUserOrdersController = async (request, response) => {
   try {
     const userId = request.userId;
     const { page = 1, limit = 6 } = request.query;
 
-    // Tìm các orderId duy nhất
-    const distinctOrderIds = await OrderModel.distinct("orderId", { userId });
+    // BƯỚC 1: Lấy TẤT CẢ orderId của user và sắp xếp theo thời gian tạo mới nhất
+    const allOrderGroups = await OrderModel.aggregate([
+      { $match: { userId: new mongoose.Types.ObjectId(userId) } },
+      {
+        $group: {
+          _id: "$orderId",
+          firstOrderDate: { $min: "$createdAt" },
+          items: { $push: "$ROOT" },
+        },
+      },
+      { $sort: { firstOrderDate: -1 } }, // Sắp xếp tất cả đơn hàng theo thời gian tạo
+    ]);
 
-    const totalOrders = distinctOrderIds.length;
+    const totalOrders = allOrderGroups.length;
     const totalPages = Math.ceil(totalOrders / limit);
     const skip = (page - 1) * limit;
 
-    // Lấy orderId cho trang hiện tại
-    const paginatedOrderIds = distinctOrderIds.slice(
+    // BƯỚC 2: Lấy đơn hàng cho trang hiện tại SAU KHI đã sắp xếp
+    const paginatedOrderGroups = allOrderGroups.slice(
       skip,
       skip + parseInt(limit)
     );
 
     const orders = [];
 
-    // Lấy chi tiết cho từng đơn hàng
-    for (const orderId of paginatedOrderIds) {
+    // BƯỚC 3: Xử lý từng nhóm đơn hàng để lấy thông tin chi tiết
+    for (const orderGroup of paginatedOrderGroups) {
+      const orderId = orderGroup._id;
+
+      // Lấy chi tiết đơn hàng với populate
       const orderItems = await OrderModel.find({ userId, orderId })
         .populate("delivery_address")
         .sort({ createdAt: -1 });
@@ -158,8 +174,7 @@ export const getUserOrdersController = async (request, response) => {
       }
     }
 
-    // Sắp xếp theo thời gian tạo mới nhất
-    orders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    // Lưu ý: Không cần sắp xếp lại ở đây vì đã sắp xếp từ aggregation
 
     return response.status(200).json({
       message: "Lấy danh sách đơn hàng thành công",

@@ -25,7 +25,7 @@ const MyOrders = () => {
         ...SummaryApi.getMyOrders,
         params: {
           page: pagination.currentPage,
-          limit: 2, // Hiển thị 6 đơn hàng mỗi trang
+          limit: 4, // Hiển thị 6 đơn hàng mỗi trang
         },
       });
 
